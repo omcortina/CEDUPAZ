@@ -323,6 +323,7 @@
         var data_form = $("#formEditarCurso").serialize()
         var token = data_form.split("&")[0].split("=")[1]
         var curso_padre = {
+            "ic_curso" : $("#id_curso").val(),
             "codigo" : $("#codigo_padre").val(),
             "nombre" : $("#nombre_padre").val()
         }

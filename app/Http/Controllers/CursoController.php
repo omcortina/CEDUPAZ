@@ -83,8 +83,8 @@ class CursoController extends Controller
         $errors = [];
            if ($post) {
                 $post = (object) $post;
-                $c = Curso::all()->where('codigo', $post->codigo);
-                if(count($c)>0){
+                $c = Curso::all()->where('codigo', $post->curso_padre['codigo']);
+                if(count($c)>1){
                      return response()->json([
                             'mensaje'=> "Este codigo ya esta registrado",
                             'error' =>true

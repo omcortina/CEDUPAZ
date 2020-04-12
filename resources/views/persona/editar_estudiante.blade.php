@@ -150,10 +150,7 @@
     </div>
 @endsection
 
-@php
-    var_dump($persona->cursoActual());
-    die();
-@endphp
+
 <script>
     function MostrarSubCursos(){
         $("#selectCurso").html('<option value="0">Seleccione...</option>')

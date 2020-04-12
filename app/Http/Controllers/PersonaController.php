@@ -158,14 +158,14 @@ class PersonaController extends Controller
            if ($post) {
                 $post = (object) $post;
                 $p = Persona::all()->where('identificacion', $post->identificacion);
-                if(count($p)>0){
+                if(count($p)>1){
                     $mensaje = "Esta identificacion ya esta registrada";
                     session()->flash('error_mensaje_persona', $mensaje);
                     return redirect()->route('persona/listar_docentes');
                 }
 
                 $p = Persona::all()->where('username', $post->username);
-                if(count($p)>0){
+                if(count($p)>1){
                     $mensaje = "Este usuario ya existe";
                     session()->flash('error_mensaje_persona', $mensaje);
                     return redirect()->route('persona/listar_estudiantes');
@@ -194,26 +194,28 @@ class PersonaController extends Controller
            if ($post) {
                 $post = (object) $post;
                 $p = Persona::all()->where('identificacion', $post->identificacion);
-                if(count($p)>0){
+                if(count($p)>1){
                     $mensaje = "Esta identificacion ya esta registrada";
                     session()->flash('error_mensaje_persona', $mensaje);
                     return redirect()->route('persona/listar_estudiantes');
                 }
 
                 $p = Persona::all()->where('username', $post->username);
-                if(count($p)>0){
+                if(count($p)>1){
                     $mensaje = "Este usuario ya existe";
                     session()->flash('error_mensaje_persona', $mensaje);
                     return redirect()->route('persona/listar_estudiantes');
                 }
-                $persona = Persona::find($post->id_persona); 
-                $curso_estudiante = CursoEstudiante::find($id_persona);   
+                $persona = Persona::find($post->id_persona);
+                
+                $curso_estudiante = CursoEstudiante::all()->where('id_persona', $post->id_persona);  
+                  
                 $validator = \Validator::make($request->except('_token'), $persona->rules);
                 if (!$validator->fails()) {
                     $persona->update($request->except('_token'));
 
-                    $cursos_persona = CursoEstudiante::all('id_persona', $persona->id_persona);
-                    foreach ($cursos_persona as $curso_persona) {
+
+                    foreach ($curso_estudiante as $curso_persona) {
                         $curso_persona->estado = 0;
                         $curso_persona->update();
                     }
