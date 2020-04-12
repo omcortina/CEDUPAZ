@@ -32,7 +32,7 @@ class AsignaturaController extends Controller
         $asignatura = new Asignatura;
            if ($post) {
             $post = (object) $post;
-            $a = Asignatura::all()->where('codigo', $post->codigo);
+            $a = Asignatura::all()->where('codigo', $post->materia_padre['codigo']);
             if(count($a)>0){
                  return response()->json([
                         'mensaje'=> "Este codigo ya esta registrado",
