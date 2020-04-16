@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+
+@php
+    $administrador = \App\Persona::find(session('id_usuario'));
+@endphp
 <html lang="en">
 
 <head>
@@ -150,7 +154,7 @@
                                             <img src="{{ asset('Diseño/images/icon/avatar-01.jpg') }}" alt="John Doe" />
                                         </div>
                                         <div class="content">
-                                            <a class="js-acc-btn" href="#">john doe</a>
+                                            <a class="js-acc-btn" href="#">{{$administrador->nombre}}</a>
                                         </div>
                                         <div class="account-dropdown js-dropdown">
                                             <div class="info clearfix">
@@ -161,9 +165,9 @@
                                                 </div>
                                                 <div class="content">
                                                     <h5 class="name">
-                                                        <a href="#">john doe</a>
+                                                        <a href="#">{{$administrador->nombre}} {{$administrador->apellido}}</a>
                                                     </h5>
-                                                    <span class="email">johndoe@example.com</span>
+                                                    <span class="email">{{$administrador->email}}</span>
                                                 </div>
                                             </div>
                                             <div class="account-dropdown__body">

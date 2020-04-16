@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Asignatura;
 use App\Curso;
+use App\CursoEstudiante;
 use Illuminate\Http\Request;
 
 class CursoController extends Controller

@@ -29,7 +29,7 @@ class Curso extends Model
 
     public function estudiantes(){
         $estudiantes=[];
-        $cursos_estudiantes = CursoEstudiante::all()->where('id_curso',$this->id_curso); //lista de objetos del model Persona
+        $cursos_estudiantes = CursoEstudiante::all()->where('id_curso',$this->id_curso)->where('estado',1); //lista de objetos del model Persona
         
         foreach ($cursos_estudiantes as $curso_estudiante) {
             $estudiante = $curso_estudiante->estudiante;

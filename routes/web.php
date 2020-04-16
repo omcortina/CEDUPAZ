@@ -61,9 +61,13 @@ Route::get('asignatura/listar_documentos_materias/{id_asignatura}','AsignaturaCo
 
 Route::any('documento/subir_documento', 'DocumentoController@SubirDocumento')->name('documento/subir_documento');
 
+Route::any('documento/editar_documento', 'DocumentoController@EditarDocumento')->name('documento/editar_documento');
+
 Route::get('documento/eliminar_documento/{id_documento}', 'DocumentoController@EliminarDocumento')->name('documento/eliminar_documento');
 
 Route::get('documento/cambiar_estado/{id_documento}', 'DocumentoController@CambiarEstado')->name('documento/cambiar_estado');
+
+Route::get('documento/consultar_documento/{id_documento}', 'DocumentoController@ConsultarDocumento')->name('documento/consultar_documento');
 
 Route::get('documento/download/{id_documento}' , 'DocumentoController@downloadFile')->name('documento/download');
 

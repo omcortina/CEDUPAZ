@@ -81,7 +81,10 @@ header('Content-Type: text/html; charset=UTF-8');
                                             </div>
                                             <div class="col-lg-6">
                                                 <br>
-                                                <a class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="EliminarDocumento({{$documento->id_documento}})"><i class="fa fa-trash"></i></a>
+                                                <a title="Eliminar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="EliminarDocumento({{$documento->id_documento}})"><i class="fa fa-trash"></i></a>
+
+                                                <a title="Editar documento" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="AbrirModalDocumentoEdit({{$documento->id_documento}})"> <i class="fa fa-pencil-square-o"></i></a>
+
                                                 @if ($documento->estado_oculto == 0)
                                                     <a title="Cambiar a visible" class="pull-right" style="color: #007bff; cursor: pointer; margin-left: 15px" href="#" onclick="CambiarEstado({{$documento->id_documento}})"><i class="fa fa-eye-slash"></i></a>
                                                 @else
@@ -135,7 +138,7 @@ header('Content-Type: text/html; charset=UTF-8');
             <div class="form-group">
                 <label for="cc-payment" class="control-label mb-1">Tipo de documento</label>
 
-                <select name="id_dominio_tipo"  class="form-control" onchange="if(this.value==14){$('#divUrlVideo').fadeIn(); $('#divDocumento').fadeOut()} else{$('#divUrlVideo').fadeOut(); $('#divDocumento').fadeIn()}">
+                <select name="id_dominio_tipo"  class="form-control" onchange="if(this.value==14){$('#divUrlVideo').fadeIn(); $('#divDocumento').fadeOut()} else{$('#divUrlVideo').fadeOut(); $('#divDocumento').fadeIn()} if(this.value==0){$('#divDocumento').fadeOut(); $('#divUrlVideo').fadeOut()}">
                     @php
                         $tipos_de_documento = \App\Dominio::all()->where('id_padre',7);
                     @endphp
@@ -147,7 +150,7 @@ header('Content-Type: text/html; charset=UTF-8');
             </div>
 
             <div class="form-group">
-                <label for="cc-payment" class="control-label mb-1">Tipo de documento</label>
+                <label for="cc-payment" class="control-label mb-1">Estado</label>
 
                 <select name="estado_oculto"  class="form-control">
                         <option value="1">Visible</option>
@@ -180,6 +183,72 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 {{ Form::close() }}
 
+{{ Form::open(array('method' => 'post', 'files' => true, 'route' => 'documento/editar_documento'))}}
+    <div class="modal fade" id="ModalDocumentoEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Editar documentos</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" name="id_documento" id="id_documento">
+            <input type="hidden" name="id_asignatura_documento" id="id_asignatura_documento">
+            <div class="form-group">
+                <label for="cc-payment" class="control-label mb-1">Nombre</label>
+                <input name="nombre" id="nombre" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cc-payment" class="control-label mb-1">Tipo de documento</label>
+
+                <select name="id_dominio_tipo" id="id_dominio_tipo"  class="form-control" onchange="if(this.value==14){$('#divUrlVideoEdit').fadeIn(); $('#divDocumentoEdit').fadeOut()} else{$('#divUrlVideoEdit').fadeOut(); $('#divDocumentoEdit').fadeIn()} if(this.value==0){$('#divDocumentoEdit').fadeOut(); $('#divUrlVideoEdit').fadeOut()}">
+                    @php
+                        $tipos_de_documento = \App\Dominio::all()->where('id_padre',7);
+                    @endphp
+                            <option value="0">Seleccione...</option>
+                            @foreach ($tipos_de_documento as $td)
+                              <option value="{{$td->id_dominio}}">{{$td->nombre}}</option>    
+                            @endforeach
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cc-payment" class="control-label mb-1">Estado</label>
+
+                <select name="estado_oculto" id="estado_oculto"  class="form-control">
+                        <option value="1">Visible</option>
+                        <option value="0">Oculto</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="divDocumentoEdit" style="display: none">
+                <label for="cc-payment" class="control-label mb-1">Documento</label>
+                <input name="archivo" type="file" id="file-input" name="file-input" class="form-control-file">
+            </div>
+
+            <div class="form-group" id="divUrlVideoEdit" style="display: none">
+                <label for="cc-payment" class="control-label mb-1">Url video</label>
+                <input name="urlVideo" id="urlVideo" type="text" class="form-control" aria-required="true" aria-invalid="false">
+            </div>
+
+            <div class="form-group">
+                <label for="cc-payment" class="control-label mb-1">Observaciones</label>
+                <input name="descripcion" id="descripcion" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{{ Form::close() }}
+
 <div class="modal fade" id="ModalVideo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document" style="max-width: 600px">
         <div class="modal-content">
@@ -201,15 +270,36 @@ header('Content-Type: text/html; charset=UTF-8');
 <script>
     function AbrirModalDocumento(id_asignatura){
         $("#id_asignatura").val(id_asignatura)
+        
         $("#ModalDocumento").modal("show")
+    }
 
+    function AbrirModalDocumentoEdit(id_documento){
+      $("#ModalDocumentoEdit").modal("show")
+      var url = "../../documento/consultar_documento/"+id_documento
+      console.log(url)
+      $.get(url, function(response){
+        $("#id_asignatura_documento").val(response.id_asignatura)
+        $("#id_documento").val(response.id_documento)
+        $("#nombre").val(response.nombre)
+        $("#id_dominio_tipo").val(response.id_dominio_tipo)
+        $("#estado_oculto option[value="+response.estado_oculto+"]").attr("selected",true)
+          if(response.id_dominio_tipo == 14){
+            $("#divDocumentoEdit").fadeOut()
+            $("#divUrlVideoEdit").fadeIn()
+            $("#urlVideo").val(response.url)
+          }else{
+            $("#divDocumentoEdit").fadeIn()
+            $("#divUrlVideoEdit").fadeOut()
+          }
+        $("#descripcion").val(response.descripcion)
+      })
     }
 
     function VerVideo(url){
         var url_video = url.replace("watch?v=", "embed/");
         document.getElementById('frame_video').src = url_video
         $("#ModalVideo").modal("show")
-
     }
 
     function EliminarDocumento(id_documento){

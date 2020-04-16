@@ -93,9 +93,11 @@
                             </tr>
                         </thead>
                         <tbody id="bodytable">
+                            
                             @foreach ($curso->subCursos as $sc)
                                 <script>
                                     AgregarSubCursosExistentes('{{$sc->id_curso}}', '{{$sc->codigo}}','{{$sc->nombre}}', '{{count($sc->estudiantes())}}')
+
                                 </script>
                             @endforeach
                         </tbody>
@@ -167,7 +169,6 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary" onclick="AgregarSubcurso()">Agregar</button>
       </div>
     </div>
   </div>
@@ -356,11 +357,11 @@
 
     function MostrarEstudiantes(posicion, id_curso){
         $("#ModalVerEstudiantes").modal("show")
+        $("#bodytableModal").html('')
         var url = "../../curso/estudiantes_por_curso/"+id_curso
         console.log(url)
         $.get(url, function(response){
             response.forEach((estudiantes)=>{
-                $("#bodytableModal").html('')
                 var fila = "<tr>"+
                            "<td>"+estudiantes.identificacion+"</td>"+
                            "<td>"+estudiantes.nombre+"</td>"+
@@ -369,6 +370,7 @@
                            "<td>"+estudiantes.telefono+"</td>"+
                            "</tr>"
                 $("#bodytableModal").append(fila)
+                posicion++
             })
         })
     }

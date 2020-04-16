@@ -240,15 +240,18 @@
 <script>
     var sub_materias = [];
     var sub_cursos_escogidos = [];
-    console.log(sub_cursos_escogidos)
 
     function AgregarSubmaterias() {
         var codigo = $("#codigo").val()
         var nombre = $("#nombre").val()
-        var nombre_docente = $("select[name='selectDocenteModal'] option:selected").text()
+        var nombre_completo = $("select[name='selectDocenteModal'] option:selected").text()
+        var nombre_docente = nombre_completo.split(" ")[0]
+        var apellido_docente = nombre_completo.split(" ")[1]
         var id_docente = $("#selectDocenteModal").val()
         var nombre_curso_hijo = $("select[name='selectCursoHijo'] option:selected").text()
         var id_curso_hijo = $("#selectCursoHijo").val()
+
+       
 
         var subMateria = {
             "id_asignatura":0,
@@ -256,13 +259,18 @@
             "nombre":nombre,
             "id_persona" : id_docente,
             "nombre_docente" : nombre_docente,
+            "apellido_docente":apellido_docente,
             "id_curso" : id_curso_hijo,
             "nombre_curso_hijo" : nombre_curso_hijo
         }
 
+
+
+
         $("#codigo").val("")
         $("#nombre").val("")
         sub_materias.push(subMateria)
+        console.log(sub_materias)
         sub_cursos_escogidos.push(parseInt(id_curso_hijo))
         ActualizarCursosHijosSelect()
         MostrarTabla()
@@ -341,6 +349,7 @@
                         ).then((result) => {
                               if (result.value) {
                                 sub_materias.splice(posicion, 1)
+                                sub_cursos_escogidos.splice(posicion, 1)
                                 MostrarTabla()
                               }
                             })
@@ -364,6 +373,7 @@
                         ).then((result) => {
                               if (result.value) {
                                 sub_materias.splice(posicion, 1)
+                                sub_cursos_escogidos.splice(posicion, 1)
                                 MostrarTabla()
                               }
                 })

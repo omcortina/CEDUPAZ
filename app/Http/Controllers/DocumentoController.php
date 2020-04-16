@@ -39,13 +39,57 @@ class DocumentoController extends Controller
               }
             }  
 
-             $documento->save();
-             $mensaje = "Documento subido";
-         	   session()->flash('mensaje_documento', $mensaje); 
-             return redirect()->route('persona/listar_materias_curso', ['id_curso' => $asignatura->id_curso]);
-            
-    		}
+            $documento->save();
+            $mensaje = "Documento subido";
+         	session()->flash('mensaje_documento', $mensaje); 
+            return redirect()->route('persona/listar_materias_curso', ['id_curso' => $asignatura->id_curso]);
+    	}
 	}
+
+    public function EditarDocumento(Request $request){
+        $post = $request->all();
+        if ($post) {
+            $post = (object) $post;
+            $archivo = $request->file("archivo");
+            $asignatura = Asignatura::find($post->id_asignatura_documento);
+
+            $documento = Documento::find($post->id_documento);
+            $documento->nombre=$post->nombre;
+            $documento->id_dominio_tipo=$post->id_dominio_tipo;
+            $documento->estado_oculto=$post->estado_oculto;
+            $documento->descripcion=$post->descripcion;
+            if ($archivo != null && $documento->id_dominio_tipo != 14) {
+                $ruta = '/files/'.$documento->url;
+               
+                $exists =Storage::disk('public')->exists($ruta);
+                if($exists) Storage::disk('public')->delete($ruta);
+                $documento->delete();
+                
+                $fecha_actual = date('d-m-Y_H_i_ s');
+                $nombre = $fecha_actual.'_'.$archivo->getClientOriginalName();
+                $ruta = '/files';
+                 
+                Storage::disk('public')->put($ruta."/".$nombre,  \File::get($archivo));
+
+                $documento->url = $nombre;
+            }
+
+            if($documento->id_dominio_tipo == 14){
+                $documento->url = $post->urlVideo;
+            }
+
+            $documento->save();
+            $mensaje = "Documento modificado";
+            session()->flash('mensaje_documento', $mensaje); 
+            return redirect()->route('persona/listar_materias_curso', ['id_curso' => $asignatura->id_curso]);
+        }
+    }
+
+    public function ConsultarDocumento($id_documento){
+        $documento = Documento::find($id_documento);
+        return response()->json($documento);
+
+    }
 
 	public function EliminarDocumento($id_documento){
         $documento = Documento::find($id_documento);
