@@ -103,7 +103,7 @@
                     </div>
                     <br>
                     <div>
-                        <a id="payment-button" class="btn btn-lg btn-danger btn-block" style="color: white" href="{{ route('persona/eliminar_personas' ,$persona->id_persona)}}">
+                        <a id="payment-button" class="btn btn-lg btn-danger btn-block" style="color: white" href="{{ route('persona/eliminar_docente' ,$persona->id_persona)}}">
                             <i class="fa fa-trash fa-lg"></i>&nbsp;
                             <span id="payment-button-amount">Eliminar</span>
                             <span id="payment-button-sending" style="display:none;">Sending…</span>

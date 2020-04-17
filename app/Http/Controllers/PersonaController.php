@@ -33,19 +33,33 @@ class PersonaController extends Controller
             }
 
             if ($persona->id_dominio_tipo_persona == 6) {
-                session([
+                if ($persona->estado != 0) {
+                    session([
                     'id_usuario' => $persona->id_persona,
                     'docente' => true
-                ]);
-                return view("layouts.main_docente");
+                    ]);
+                    return view("layouts.main_docente");
+                }else{
+                    $mensaje = "Este usuario ya no esta disponible en la plataforma";
+                    session()->flash('mensaje_login', $mensaje);
+                    return view("layouts.login");
+                }
+                
             }
 
             if ($persona->id_dominio_tipo_persona == 10) {
-                session([
+                if ($persona->estado != 0) {
+                    session([
                     'id_usuario' => $persona->id_persona,
                     'estudiante' => true
-                ]);
-                return view("layouts.main_estudiante");
+                    ]);
+                    return view("layouts.main_estudiante");
+                }else{
+                    $mensaje = "Este usuario ya no esta disponible en la plataforma";
+                    session()->flash('mensaje_login', $mensaje);
+                    return view("layouts.login");
+                }
+                
             }
         }
 
@@ -62,12 +76,12 @@ class PersonaController extends Controller
     }
 
     public function ListarDocentes(){
-        $docentes = Persona::all()->where('id_dominio_tipo_persona', 6);
+        $docentes = Persona::all()->where('id_dominio_tipo_persona', 6)->where('estado', 1);
         return view("persona.listado_docentes",compact('docentes'));
     }
 
     public function ListarEstudiantes(){
-        $estudiantes = Persona::all()->where('id_dominio_tipo_persona', 10);
+        $estudiantes = Persona::all()->where('id_dominio_tipo_persona', 10)->where('estado', 1);
         return view("persona.listado_estudiantes",compact('estudiantes'));
     }
 
@@ -96,6 +110,7 @@ class PersonaController extends Controller
             $validator = \Validator::make($request->except('_token'), $persona->rules);
             if (!$validator->fails()) {
                 $request['id_dominio_tipo_persona'] = 6;
+                $request['estado'] = 1;
                 $persona->create($request->except('_token'));
                 $mensaje = "Persona registrada exitosamente";
                 session()->flash('mensaje_persona', $mensaje);
@@ -129,15 +144,26 @@ class PersonaController extends Controller
                 return redirect()->route('persona/listar_estudiantes');
             }
 
+            
+            $sexo = $post->id_dominio_tipo_sexo;
+            $sexo = intval($sexo);
+
+            if($sexo == 0){
+                $mensaje = "El estudiante no se pudo registrar, el campo sexo es obligatorio";
+                session()->flash('error_mensaje_persona', $mensaje);
+                return redirect()->route('persona/listar_estudiantes');
+            }
+
             $request['id_dominio_tipo_persona'] = 10;
+            $request['estado'] = 1;
             $persona->fill($request->except('_token'));
             $validator = \Validator::make($request->except('_token'), $persona->rules);
             if (!$validator->fails()) {
                 $persona->save();
                 $curso_estudiante = new CursoEstudiante;
                 $curso_estudiante->id_persona = $persona->id_persona;
+                $curso_estudiante->estado = $persona->estado;
                 $curso_estudiante->id_curso = $post->id_curso;
-                $curso_estudiante->estado = 1;
                 $curso_estudiante->save();
 
                 $mensaje = "Persona registrada exitosamente";
@@ -236,24 +262,32 @@ class PersonaController extends Controller
         return view('persona.editar_estudiante',compact('persona'),compact(['errors', 'cursos']));
     }
 
-    public function EliminarPersona($id_persona)
+
+    public function EliminarEstudiante($id_persona)
     {
         $mensaje = '';
         $persona = Persona::find($id_persona);
-        if ($persona->id_dominio_tipo_persona==6) {
-            $persona->delete();
-            $mensaje = "Persona eliminada exitosamente";
-            session()->flash('mensaje_persona', $mensaje);
-            return redirect()->route('persona/listar_docentes');
-        }
+        $cursos_estudiante = CursoEstudiante::all()->where('id_persona', $id_persona);
+        foreach ($cursos_estudiante as $curso_estudiante) {
+            $curso_estudiante->estado = 0;
+            $curso_estudiante->update();
+        } 
+        $persona->estado = 0;
+        $persona->update();       
+        $mensaje = "Persona eliminada exitosamente";
+        session()->flash('mensaje_persona', $mensaje);
+        return redirect()->route('persona/listar_estudiantes');
+    }
 
-        if ($persona->id_dominio_tipo_persona==10) {
-            $persona->delete();
-            $mensaje = "Persona eliminada exitosamente";
-            session()->flash('mensaje_persona', $mensaje);
-            return redirect()->route('persona/listar_estudiantes');
-        }
-        
+    public function EliminarDocente($id_persona)
+    {
+        $mensaje = '';
+        $persona = Persona::find($id_persona);
+        $persona->estado = 0;
+        $persona->update();
+        $mensaje = "Persona eliminada exitosamente";
+        session()->flash('mensaje_persona', $mensaje);
+        return redirect()->route('persona/listar_docentes');
     }
 
     public function ListarMateriasPorCurso($id_curso){

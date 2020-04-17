@@ -31,7 +31,9 @@ Route::any('persona/editar_docente/{id_persona}', 'PersonaController@EditarDocen
 
 Route::any('persona/editar_estudiante/{id_persona}', 'PersonaController@EditarEstudiante')->name('persona/editar_estudiante');
 
-Route::get('persona/eliminar_personas/{id_persona}','PersonaController@EliminarPersona')->name('persona/eliminar_personas');
+Route::get('persona/eliminar_estudiante/{id_persona}','PersonaController@EliminarEstudiante')->name('persona/eliminar_estudiante');
+
+Route::get('persona/eliminar_docente/{id_persona}','PersonaController@EliminarDocente')->name('persona/eliminar_docente');
 
 Route::get('asignatura/listar_asignaturas','AsignaturaController@ListarAsignaturas')->name('asignatura/listar_asignaturas');
 

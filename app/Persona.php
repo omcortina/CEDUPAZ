@@ -8,7 +8,7 @@ class Persona extends Model
 {
      protected $table = 'persona';
      protected $primaryKey = 'id_persona';
-     protected $fillable = ['identificacion', 'nombre', 'apellido','email','telefono','id_dominio_tipo_sexo','username','password','id_dominio_tipo_persona'];
+     protected $fillable = ['identificacion', 'nombre', 'apellido','email','telefono','id_dominio_tipo_sexo','username','password','id_dominio_tipo_persona', 'estado'];
 
      public $rules = [
 	    'identificacion' => 'required',
@@ -42,16 +42,16 @@ class Persona extends Model
     	$cursos_padres = [];
     	$asignaturas = Asignatura::all()->where('id_persona', $this->id_persona);
 
-
+        $cursos_padres_encontrados = [];
     	foreach ($asignaturas as $asignatura) {
     		$curso = $asignatura->curso;
-    		if($curso->id_padre == null) { // el curso es padre
+    		if($curso->id_padre == null and in_array($curso, $cursos_padres_encontrados) == false) { // el curso es padre
     			$curso['hijos'] = [];
-    			array_push($cursos_padres, $curso);
+                array_push($cursos_padres, $curso);
+                array_push($cursos_padres_encontrados, $curso);
     		}
 
     	}
-
     	foreach ($cursos_padres as $curso_padre) {
     		
     		$hijos_encontrados = [];
