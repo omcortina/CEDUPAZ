@@ -21,7 +21,6 @@ class AsignaturaController extends Controller
     }
 
 
-
     public function GuardarAsignatura(Request $request)
     {
     	$post = $request->all();

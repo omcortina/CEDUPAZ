@@ -2,6 +2,7 @@
 
 @php
     $docente = \App\Persona::find(session('id_usuario'));
+    
 @endphp
 <html lang="en">
 
@@ -43,8 +44,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.js"></script>
 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.css">
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/8.11.8/sweetalert2.min.css">
+
+    
 
     <style type="text/css">
     @media (max-width: 991px){
@@ -119,7 +127,7 @@
 
                                                 @foreach ($curso_padre->hijos as $curso_hijo)
                                                  <li>
-                                                    <a href="{{ route('persona/listar_materias_curso', $curso_hijo->id_curso) }}"><i style="font-size: 5px" class="fa fa-circle"></i>{{$curso_hijo->nombre}}</a>
+                                                    <a href="{{ route('persona/listar_materias_curso', $curso_hijo->id_curso)}}"><i style="font-size: 5px" class="fa fa-circle"></i>{{$curso_hijo->nombre}}</a>
                                                  </li>
                                                  @endforeach
                                             </ul>

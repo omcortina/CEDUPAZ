@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Asignatura;
 use App\Curso;
 use App\CursoEstudiante;
+use App\CursoDocente;
 use App\Persona;//el modelo
 use Illuminate\Http\Request;
 
 class PersonaController extends Controller
 {
+    
+
 
     public function ValidarLogin(Request $request)
     {
@@ -292,10 +295,8 @@ class PersonaController extends Controller
 
     public function ListarMateriasPorCurso($id_curso){
         $curso = Curso::find($id_curso);
-
-        if ($curso) {
-            $asignaturas = $curso->asignaturas;
-            return view("persona.listado_materias_curso", compact(["asignaturas","curso"]));
-        }
+        $docente = Persona::find(session('id_usuario'));
+        $asignaturas = Asignatura::all()->where("id_curso", $id_curso)->where("id_persona", $docente->id_persona);
+        return view("persona.listado_materias_curso", compact(["asignaturas","curso"]));
     }
 }

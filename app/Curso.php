@@ -27,6 +27,12 @@ class Curso extends Model
 
     }
 
+    public function padre()
+    {
+        return $this->belongsTo(Curso::class, 'id_padre');
+    }
+
+
     public function estudiantes(){
         $estudiantes=[];
         $cursos_estudiantes = CursoEstudiante::all()->where('id_curso',$this->id_curso)->where('estado',1); //lista de objetos del model Persona
@@ -37,4 +43,5 @@ class Curso extends Model
         }
         return $estudiantes;
     }
+
 }

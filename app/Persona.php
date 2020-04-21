@@ -10,7 +10,7 @@ class Persona extends Model
      protected $primaryKey = 'id_persona';
      protected $fillable = ['identificacion', 'nombre', 'apellido','email','telefono','id_dominio_tipo_sexo','username','password','id_dominio_tipo_persona', 'estado'];
 
-     public $rules = [
+    public $rules = [
 	    'identificacion' => 'required',
 	    'nombre' => 'required',
 	    'apellido' => 'required',
@@ -38,20 +38,30 @@ class Persona extends Model
 
     }
 
+
     public function getCursosPadre(){
     	$cursos_padres = [];
     	$asignaturas = Asignatura::all()->where('id_persona', $this->id_persona);
 
         $cursos_padres_encontrados = [];
-    	foreach ($asignaturas as $asignatura) {
-    		$curso = $asignatura->curso;
-    		if($curso->id_padre == null and in_array($curso, $cursos_padres_encontrados) == false) { // el curso es padre
-    			$curso['hijos'] = [];
-                array_push($cursos_padres, $curso);
-                array_push($cursos_padres_encontrados, $curso);
-    		}
-
-    	}
+        foreach ($asignaturas as $asignatura) {
+            $curso = $asignatura->curso;
+            
+            if(in_array($curso->id_padre, $cursos_padres_encontrados) == false) {
+             // el curso es padre
+                if ($curso->id_padre == null) {
+                    $curso['hijos'] = [];
+                    array_push($cursos_padres, $curso);
+                    array_push($cursos_padres_encontrados, $curso->id_curso);
+                }else{
+                    $curso_padre = $curso->padre;
+                    $curso_padre['hijos'] = [];
+                    array_push($cursos_padres, $curso_padre);
+                    array_push($cursos_padres_encontrados, $curso_padre->id_curso);
+                }
+                
+            }
+        }
     	foreach ($cursos_padres as $curso_padre) {
     		
     		$hijos_encontrados = [];
@@ -86,6 +96,9 @@ class Persona extends Model
         return $cursos;
     }
 
+
+
+
     public function cursoActual(){
         $cursos=[];
         $curso_estudiante = CursoEstudiante::where('id_persona',$this->id_persona)->where('estado',1)->first(); //lista de objetos del model Curso  
@@ -95,7 +108,6 @@ class Persona extends Model
             return $curso;
         }
 
-        return null;
-        
+        return null;      
     }
 }

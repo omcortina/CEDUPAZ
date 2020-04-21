@@ -1,7 +1,4 @@
 <title>Listado Mis Cursos</title>
-<?php 
-header('Content-Type: text/html; charset=UTF-8');
-?>
 @extends('layouts.main_estudiante')
 @section('content')
 <style type="text/css">
@@ -17,10 +14,21 @@ header('Content-Type: text/html; charset=UTF-8');
             <div class="card-header">Listado de documentos</div>
             <div class="card-body">
 
-            @if (session('mensaje_documento'))
+            @if (session('mensaje_entrega'))
                 <div id="msg" class="alert alert-success" >
                     
-                        <li>{{session('mensaje_documento')}}</li>
+                        <li>{{session('mensaje_entrega')}}</li>
+                </div>
+
+                <script>
+                    setTimeout(function(){ $('#msg').fadeOut() }, 4000);
+                </script>
+            @endif
+
+            @if (session('mensaje_error_entrega'))
+                <div id="msg" class="alert alert-danger" >
+                    
+                        <li>{{session('mensaje_error_entrega')}}</li>
                 </div>
 
                 <script>
@@ -36,10 +44,12 @@ header('Content-Type: text/html; charset=UTF-8');
                             <h3>
                                 <i class="zmdi zmdi-account-calendar"></i>{{mb_strtoupper($asignatura->nombre)}}</h3>
                         </div>
-                        <div class="au-task js-list-load au-task--border">
-                            <div class="au-task__title">
-                                <p>Documentos</p>
-                            </div>
+                        <div class="row">
+                          <div class="col-lg-6">
+                            <div class="au-task js-list-load au-task--border">
+                                <div class="au-task__title">
+                                    <p>Actividades</p>
+                                </div>
                             @php
 
                             $contador = 0;
@@ -49,45 +59,150 @@ header('Content-Type: text/html; charset=UTF-8');
                                         'au-task__item au-task__item--primary',
                                         'au-task__item au-task__item--success'
                                         ]
-
-
                             @endphp
                             <div class="au-task-list js-scrollbar3">
-                                @foreach ($asignatura->documentos as $documento)
-                                @if ($documento->estado_oculto == 1)
+                              
+                            @foreach ($asignatura->actividades as $actividad)
+                            @php
+                                $entrega = \App\Entrega::where('id_estudiante', session('id_usuario'))->where('id_actividad', $actividad->id_actividad)->first();
+                            @endphp
+                            @if ($actividad->estado == 1)
+                              <div class="{{$colores[$contador]}}">
+                                    <div class="au-task__item-inner" id="div_documento">
+                                        <div class=row>
+                                            <div class="col-lg-8">
+                                              @if ($entrega != null)
+                                                <h5 class="task">
+                                                    <a href="#"><b>Nombre: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$actividad->nombre)))}}</a>
+                                                </h5>
+                                                <h5 class="task">
+                                                    <a href="#"><b>Apertura: </b> {{date('d-m-Y H:i', strtotime($actividad->fecha_inicio))}}<br>
+                                                        <b>Cierre: </b>{{date('d-m-Y H:i', strtotime($actividad->fecha_fin))}}
+                                                    </a>
+                                                </h5>
 
-                                    <div class="{{$colores[$contador]}}">
-                                        <div class="au-task__item-inner" id="div_documento">
-                                            <div class=row>
-                                                <div class="col-lg-6">
-                                                    <h5 class="task">
-                                                        <a href="#">{{ucwords(strtolower(str_replace("ñ", "n" ,$documento->nombre)))}}</a>
-                                                    </h5>
+                                                  <h5 class="task">
+                                                    <a href="#"><b>Estado: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$entrega->estado->nombre)))}}</a>
+                                                  </h5>
 
-                                                    <span class="time">{{date('d-m-Y', strtotime($documento->fecha))}}</span>
-                                                    <h5 class="task">
-                                                        <a href="#">{{ucwords(strtolower(str_replace("ñ", "n" ,$documento->descripcion)))}}</a>
-                                                    </h5>
-                                                </div>
-                                                <div class="col-lg-6">
-                                                    <br>
-                                                 @if ($documento->id_dominio_tipo != 14)
-                                                    <a target="_blank" title="Descargar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('documento/download', $documento->id_documento) }}"><i class="fa fa-download"></i></a>
-                                                @else
-                                                <a title="Ver video" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerVideo('{{$documento->url}}')"><i class="fa fa-video-camera"></i></a>
-                                                @endif 
-                                                </div>
-                                            </div>                                        
+                                                  <h5 class="task">
+                                                    <a href="#"><b>Calificacion: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$entrega->calificacion)))}}</a>
+                                                  </h5>
+                                              @else
+                                              <h5 class="task">
+                                                    <a href="#"><b>Nombre: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$actividad->nombre)))}}</a>
+                                                </h5>
+                                                <h5 class="task">
+                                                    <a href="#"><b>Apertura: </b> {{date('d-m-Y H:i', strtotime($actividad->fecha_inicio))}}<br>
+                                                        <b>Cierre: </b>{{date('d-m-Y H:i', strtotime($actividad->fecha_fin))}}
+                                                    </a>
+                                                </h5>
+                                              @endif
+                                                
+                                                
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <br>
+                                                @php
+                                                    $fecha_actual = date("Y-m-d H:i");
+                                                    $fecha_inicio = date("Y-m-d H:i", strtotime($actividad->fecha_inicio));
+                                                    $fecha_fin = date("Y-m-d H:i", strtotime( $actividad->fecha_fin));
+                                                @endphp
+                                                
+                                                @if ($entrega == null)
+                                                  @if ($fecha_actual >= $fecha_inicio and $fecha_actual <= $fecha_fin)
+                                                    <a title="Ver informacion" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerInformacion({{$actividad->id_actividad}})"> <i class="fa fa-info-circle"></i></a>
+
+                                                    <a title="Agregar entrega" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('entrega/agregar_entrega', $actividad->id_actividad) }}"><i class="fa fa-plus"></i></a>
+                                                  @else
+                                                    <a title="Ver informacion" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerInformacion({{$actividad->id_actividad}})"> <i class="fa fa-info-circle"></i></a>
+                                                  @endif
+                                                    
+                                                  @else
+                                                  
+                                                  @if ($entrega->calificacion != null)
+                                                    <a title="Ver informacion" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerInformacion({{$actividad->id_actividad}})"> <i class="fa fa-info-circle"></i></a>
+                                                    @else
+                                                    @if ($fecha_actual >= $fecha_inicio and $fecha_actual <= $fecha_fin)
+                                                      <a title="Ver informacion" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerInformacion({{$actividad->id_actividad}})"> <i class="fa fa-info-circle"></i></a>
+
+                                                      <a title="Editar entrega" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('entrega/editar_entrega', $entrega->id_entrega) }}"> <i class="fa fa-pencil-square-o"></i></a>
+                                                      @else
+                                                      <a title="Ver informacion" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerInformacion({{$actividad->id_actividad}})"> <i class="fa fa-info-circle"></i></a>
+                                                    @endif
+                                                  @endif 
+                                                @endif   
+                                            </div>
                                         </div>
+                                        
                                     </div>
-                                @endif   
-                                    @php
-                                    $contador ++;
-                                    if ($contador==4) $contador = 0;
-                                    @endphp
-                                @endforeach
+                                </div>
+                              @endif
+                                @php
+                                $contador ++;
+                                if ($contador==4) $contador = 0;
+                                @endphp
+                            @endforeach
                             </div>                  
                         </div>
+                          </div>
+
+                          <div class="col-lg-6">
+                              <div class="au-task js-list-load au-task--border">
+                                <div class="au-task__title">
+                                    <p>Documentos de apoyo</p>
+                                </div>
+                                @php
+
+                                $contador = 0;
+                                $colores = [
+                                            'au-task__item au-task__item--danger',
+                                            'au-task__item au-task__item--warning',
+                                            'au-task__item au-task__item--primary',
+                                            'au-task__item au-task__item--success'
+                                            ]
+
+
+                                @endphp
+                                <div class="au-task-list js-scrollbar3">
+                                    @foreach ($asignatura->documentos as $documento)
+                                    @if ($documento->estado_oculto == 1)
+
+                                        <div class="{{$colores[$contador]}}">
+                                            <div class="au-task__item-inner" id="div_documento">
+                                                <div class=row>
+                                                    <div class="col-lg-6">
+                                                        <h5 class="task">
+                                                            <a href="#">{{ucwords(strtolower(str_replace("ñ", "n" ,$documento->nombre)))}}</a>
+                                                        </h5>
+
+                                                        <span class="time">{{date('d-m-Y', strtotime($documento->fecha))}}</span>
+                                                        <h5 class="task">
+                                                            <a href="#">{{ucwords(strtolower(str_replace("ñ", "n" ,$documento->descripcion)))}}</a>
+                                                        </h5>
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <br>
+                                                     @if ($documento->id_dominio_tipo != 14)
+                                                        <a target="_blank" title="Descargar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('documento/download', $documento->id_documento) }}"><i class="fa fa-download"></i></a>
+                                                    @else
+                                                    <a title="Ver video" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerVideo('{{$documento->url}}')"><i class="fa fa-video-camera"></i></a>
+                                                    @endif 
+                                                    </div>
+                                                </div>                                        
+                                            </div>
+                                        </div>
+                                    @endif   
+                                        @php
+                                        $contador ++;
+                                        if ($contador==4) $contador = 0;
+                                        @endphp
+                                    @endforeach
+                                </div>                  
+                            </div>
+                          </div>   
+                        </div>
+                        
                     </div>
         
                 </div>
@@ -99,65 +214,55 @@ header('Content-Type: text/html; charset=UTF-8');
 </div>
 </div>
 @endsection
-{{ Form::open(array('method' => 'post', 'files' => true, 'route' => 'documento/subir_documento'))}}
-    <div class="modal fade" id="ModalDocumento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Agregar documentos</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <input type="hidden" name="id_asignatura" id="id_asignatura">
-            <div class="form-group">
-                <label for="cc-payment" class="control-label mb-1">Nombre</label>
-                <input name="nombre" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
-            </div>
 
-            <div class="form-group">
-                <label for="cc-payment" class="control-label mb-1">Tipo de documento</label>
+<div class="modal fade" id="ModalInformacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width: 550px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Informacion de la actividad</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id_documento" id="id_documento">
+        <input type="hidden" name="id_asignatura_documento" id="id_asignatura_documento">
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="nombre_actividad"></label>
+        </div>
 
-                <select name="id_dominio_tipo"  class="form-control">
-                    @php
-                        $tipos_de_documento = \App\Dominio::all()->where('id_padre',7);
-                    @endphp
-                            <option value="0">Seleccione...</option>
-                            @foreach ($tipos_de_documento as $td)
-                                <option value="{{$td->id_dominio}}">{{$td->nombre}}</option>
-                            @endforeach
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="tipo_actividad"></label>
+        </div>
 
-            <div class="form-group">
-                <label for="cc-payment" class="control-label mb-1">Tipo de documento</label>
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="lapso_entrega_actividad"></label>
+        </div>
 
-                <select name="estado_oculto"  class="form-control">
-                        <option value="1">Visible</option>
-                        <option value="0">Oculto</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="observaciones_actividad"></label>
+        </div>
 
-            <div class="form-group" id="divDocumento">
-                <label for="cc-payment" class="control-label mb-1">Documento</label>
-                <input name="archivo" type="file" id="file-input" name="file-input" class="form-control-file" required>
-            </div>
+        <div class="table-responsive table--no-card m-b-30">
+          <table class="table table-borderless table-striped table-earning">
+              <thead>
+                  <tr>
+                      <th>Documento</th>
+                      <th><center>Descargar</center></th>
+                  </tr>
+              </thead>
+              <tbody id="bodytableDocumentos">
 
-            <div class="form-group">
-                <label for="cc-payment" class="control-label mb-1">Descripcion</label>
-                <input name="descripcion" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
-            </div>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            <button type="submit" class="btn btn-primary">Subir</button>
-          </div>
+              </tbody>
+          </table>
         </div>
       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
     </div>
-{{ Form::close() }}
+  </div>
+</div>
 
 <div class="modal fade" id="ModalVideo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document" style="max-width: 600px">
@@ -191,65 +296,24 @@ header('Content-Type: text/html; charset=UTF-8');
 
     }
 
-    function EliminarDocumento(id_documento){
-        Swal.fire({
-          title: '¿Esta seguro que desea eliminar?',
-          text: "El archivo se eliminara de forma permanente!",
-          icon: 'info',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar!',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.value) {
-            var url = "../../documento/eliminar_documento/"+id_documento
-            $.get(url, function(response) {
-                if(response.error == false){
-                    Swal.fire(
-                      'Eliminado!',
-                      'El archivo ha sido eliminado correctamente',
-                      'success'
-                    ).then((result) => {
-                          if (result.value) {
-                            location.reload()
-                          }
-                        })
-                }
-            })
-            
-          }
-        })
-    }
+    function VerInformacion(id_actividad){
+      $("#ModalInformacion").modal("show")
+      $("#bodytableDocumentos").html('')
+      var url="../../actividad/consultar_actividad/"+id_actividad
+      $.get(url, function(response){
+        $("#nombre_actividad").html("<b>Nombre:</b> "+response.actividad.nombre)
+        $("#tipo_actividad").html("<b>Tipo:</b> "+response.tipo)
+        $("#lapso_entrega_actividad").html("<b>Lapso de entrega:</b> "+response.actividad.fecha_inicio+" - "+response.actividad.fecha_fin)
+        $("#observaciones_actividad").html("<b>Observaciones:</b> "+response.actividad.observaciones)
 
-    function CambiarEstado(id_documento){
-        Swal.fire({
-          title: '¿Esta seguro que desea cambiar de estado?',
-          icon: 'info',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, cambiar!',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.value) {
-            var url = "../../documento/cambiar_estado/"+id_documento
-            $.get(url, function(response) {
-                if(response.error == false){
-                    Swal.fire(
-                      'Proceso exitoso!',
-                      'El documento se ha modificado correctamente',
-                      'success'
-                    ).then((result) => {
-                          if (result.value) {
-                            location.reload()
-                          }
-                        })
-                }
-            })
-            
-          }
+        response.documentos.forEach(function(documento){
+          var fila = "<tr>"+
+                       "<td>"+documento.nombre+"</td>"+
+                       "<td><center><a target=_blank href='../../documento/download/"+documento.id_documento+"'><i class='fa fa-download' style='color: #6c757d'></i></a></center></td>"+
+                     "</tr>"
+          $("#bodytableDocumentos").append(fila)
         })
+      })
     }
 </script>
 

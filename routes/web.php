@@ -15,6 +15,10 @@ Route::get('/', function () {
     return view('layouts.login');
 });
 
+Route::get('login', function () {
+    return view('layouts.login');
+})->name('login');
+
 Route::any('persona/validar_login', 'PersonaController@ValidarLogin')->name('persona/validar_login');
 
 Route::get('persona/cerrar_sesion', 'PersonaController@CerrarSesion')->name('persona/cerrar_sesion');
@@ -63,6 +67,14 @@ Route::get('asignatura/listar_documentos_materias/{id_asignatura}','AsignaturaCo
 
 Route::any('documento/subir_documento', 'DocumentoController@SubirDocumento')->name('documento/subir_documento');
 
+Route::any('actividad/agregar_actividad/{id_asignatura}', 'ActividadController@AgregarActividad')->name('actividad/agregar_actividad');
+
+Route::any('actividad/editar_actividad/{id_actividad}', 'ActividadController@EditarActividad')->name('actividad/editar_actividad');
+
+Route::any('actividad/consultar_actividad/{id_actividad}', 'ActividadController@ConsultarActividad')->name('actividad/consultar_actividad');
+
+Route::get('actividad/cambiar_estado_actividad/{id_actividad}', 'ActividadController@CambiarEstado')->name('actividad/cambiar_estado_actividad');
+
 Route::any('documento/editar_documento', 'DocumentoController@EditarDocumento')->name('documento/editar_documento');
 
 Route::get('documento/eliminar_documento/{id_documento}', 'DocumentoController@EliminarDocumento')->name('documento/eliminar_documento');
@@ -74,6 +86,16 @@ Route::get('documento/consultar_documento/{id_documento}', 'DocumentoController@
 Route::get('documento/download/{id_documento}' , 'DocumentoController@downloadFile')->name('documento/download');
 
 Route::get('curso/estudiantes_por_curso/{id_curso}', 'CursoController@ListarEstudiantesPorCurso')->name('curso/estudiantes_por_curso');
+
+Route::any('entrega/agregar_entrega/{id_actividad}', 'EntregaController@AgregarEntrega')->name('entrega/agregar_entrega');
+
+Route::any('entrega/editar_entrega/{id_entrega}', 'EntregaController@EditarEntrega')->name('entrega/editar_entrega');
+
+Route::any('actividad/ver_entregas/{id_actividad}', 'ActividadController@VerEntregas')->name('actividad/ver_entregas');
+
+Route::get('entrega/consultar_entrega/{id_entrega}', 'EntregaController@ConsultarEntrega')->name('entrega/consultar_entrega');
+
+Route::get('entrega/agregar_calificacion/{id_entrega}/{calificacion}', 'EntregaController@AgregarCalificacion')->name('entrega/agregar_calificacion');
 
 
 

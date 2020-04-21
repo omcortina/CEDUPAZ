@@ -30,10 +30,13 @@ class Asignatura extends Model
         return $this->belongsTo("App\Persona", "id_persona");
     }
 
-    
-
     public function documentos()
     {
-        return $this->hasMany(Documento::class, 'id_asignatura')->orderBy('id_documento', 'desc'); //lista de objetos del model Asignatura  
+        return $this->hasMany(Documento::class, 'id_asignatura')->orderBy('id_documento', 'desc');  
+    }
+
+    public function actividades()
+    {
+        return $this->hasMany(Actividad::class, 'id_asignatura')->orderBy('id_actividad', 'desc');  
     }
 }

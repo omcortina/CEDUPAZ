@@ -1,7 +1,5 @@
 <title>Listado Mis Cursos</title>
-<?php 
-header('Content-Type: text/html; charset=UTF-8');
-?>
+
 @extends('layouts.main_docente')
 @section('content')
 <style type="text/css">
@@ -14,10 +12,9 @@ header('Content-Type: text/html; charset=UTF-8');
 </div>
 	<div class="col-lg-12">
 	<div class="card">
-            <div class="card-header">Listado mis cursos</div>
+        <div class="card-header">Listado mis cursos</div>
             <div class="card-body">
             
-            <h3>{{ucwords(strtolower($curso->nombre))}}</h3>
             @if (session('mensaje_documento'))
                 <div id="msg" class="alert alert-success" >
                     
@@ -28,26 +25,107 @@ header('Content-Type: text/html; charset=UTF-8');
                     setTimeout(function(){ $('#msg').fadeOut() }, 4000);
                 </script>
             @endif
-            <br>
+
+             @if (session('mensaje_actividad'))
+                <div id="msg" class="alert alert-success" >
+                    
+                        <li>{{session('mensaje_actividad')}}</li>
+                </div>
+
+                <script>
+                    setTimeout(function(){ $('#msg').fadeOut() }, 4000);
+                </script>
+            @endif
+
             <div class="row">
 
                 @foreach ($asignaturas as $asignatura)
                     
                 
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                 	
                     <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 au-card--border">
                         <div class="au-card-title" style="background-image:url('{{ asset('Diseño/images/bg-title-01.jpg') }}');">
                             <div class="bg-overlay bg-overlay--blue"></div>
                             <h3>
                                 <i class="zmdi zmdi-account-calendar"></i>{{mb_strtoupper($asignatura->nombre)}}</h3>
-                            <button class="au-btn-plus" onclick="AbrirModalDocumento({{$asignatura->id_asignatura}})">
-                                <i class="zmdi zmdi-plus"></i>
+                                
+                            <button class="au-btn-plus" onclick="AbrirModalOpciones({{$asignatura->id_asignatura}})" >
+                                <a class="js-acc-btn" href="#"><i class="zmdi zmdi-plus"></i></a>       
                             </button>
+
+                            
+                          
                         </div>
-                        <div class="au-task js-list-load au-task--border">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="au-task js-list-load au-task--border">
+                                <div class="au-task__title">
+                                    <p>Actividades</p>
+                                </div>
+                            @php
+
+                            $contador = 0;
+                            $colores = [
+                                        'au-task__item au-task__item--danger',
+                                        'au-task__item au-task__item--warning',
+                                        'au-task__item au-task__item--primary',
+                                        'au-task__item au-task__item--success'
+                                        ]
+                            @endphp
+                            <div class="au-task-list js-scrollbar3">
+                            @foreach ($asignatura->actividades as $actividad)
+                                <div class="{{$colores[$contador]}}">
+                                    <div class="au-task__item-inner" id="div_documento">
+                                        <div class=row>
+                                            <div class="col-lg-7">
+                                                <h5 class="task">
+                                                    <a href="#"><b>Nombre: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$actividad->nombre)))}}</a>
+                                                </h5>
+
+                                                <h5 class="task">
+                                                    <a href="#"><b>Tipo: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$actividad->tipo->nombre)))}}</a>
+                                                </h5>
+                                                <h5 class="task">
+                                                    <a href="#"><b>Apertura: </b>{{date('d-m-Y H:i', strtotime($actividad->fecha_inicio))}}<br>
+                                                        <b>Cierre: </b>{{date('d-m-Y H:i', strtotime($actividad->fecha_fin))}}
+                                                    </a>
+                                                </h5>
+                                                <h5 class="task">
+                                                    <a href="#"><b>Obervaciones: </b> <i style="margin-left: 10px" class="fa fa-comment" title="{{ucwords(strtolower(str_replace("ñ", "n" ,$actividad->observaciones)))}}"></i></a>
+                                                </h5>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <br>
+
+                                                <a title="Eliminar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#"><i class="fa fa-trash"></i></a>
+
+                                                <a title="Ver entregas" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('actividad/ver_entregas', $actividad->id_actividad) }}"><i class="fa fa-check-square"></i></a>
+
+                                                <a title="Editar actividad" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('actividad/editar_actividad', $actividad->id_actividad) }}"> <i class="fa fa-pencil-square-o"></i></a>
+
+                                                @if ($actividad->estado == 0)
+                                                    <a title="Cambiar a visible" class="pull-right" style="color: #007bff; cursor: pointer; margin-left: 15px" href="#" onclick="CambiarEstadoActividad({{$actividad->id_actividad}})"><i class="fa fa-eye-slash"></i></a>
+                                                @else
+                                                <a title="Ocultar" class="pull-right" style="color: #007bff; cursor: pointer; margin-left: 15px" href="#" onclick="CambiarEstadoActividad({{$actividad->id_actividad}})"><i class="fa fa-eye"></i></a>
+                                                @endif   
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                @php
+                                $contador ++;
+                                if ($contador==4) $contador = 0;
+                                @endphp
+                            @endforeach
+                            </div>                  
+                        </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="au-task js-list-load au-task--border">
                             <div class="au-task__title">
-                                <p>Documentos</p>
+                                <p>Documentos de apoyo</p>
                             </div>
                             @php
 
@@ -107,6 +185,9 @@ header('Content-Type: text/html; charset=UTF-8');
                             @endforeach
                             </div>                  
                         </div>
+                            </div>
+                        </div>
+                        
                     </div>
         
                 </div>
@@ -118,6 +199,32 @@ header('Content-Type: text/html; charset=UTF-8');
 </div>
 </div>
 @endsection
+
+<div class="modal fade" id="modal_opciones" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content ">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Opciones</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <input type="hidden" id="asignatura_para_nuevo_documento">
+            <div class="col-lg-6">
+                <a onclick="AbrirModalDocumento(0)" href="#" class="btn btn-success" style="color: white; width: 100%"><i class="fa fa-book"></i> Nuevo documento</a>
+            </div>
+
+            <div class="col-lg-6">
+                <a href="{{ route('actividad/agregar_actividad', $asignatura->id_asignatura) }}" class="btn btn-info" style="color: white; width: 100%"><i class="fa fa-users"></i> Nueva actividad</a>
+            </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 {{ Form::open(array('method' => 'post', 'files' => true, 'route' => 'documento/subir_documento'))}}
     <div class="modal fade" id="ModalDocumento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -208,10 +315,10 @@ header('Content-Type: text/html; charset=UTF-8');
                     @php
                         $tipos_de_documento = \App\Dominio::all()->where('id_padre',7);
                     @endphp
-                            <option value="0">Seleccione...</option>
-                            @foreach ($tipos_de_documento as $td)
-                              <option value="{{$td->id_dominio}}">{{$td->nombre}}</option>    
-                            @endforeach
+                    <option value="0">Seleccione...</option>
+                    @foreach ($tipos_de_documento as $td)
+                      <option value="{{$td->id_dominio}}">{{$td->nombre}}</option>    
+                    @endforeach
                 </select>
             </div>
 
@@ -268,9 +375,16 @@ header('Content-Type: text/html; charset=UTF-8');
       </div>
 </div>
 <script>
+    var asignatura_escojida = 0
+    function AbrirModalOpciones(id_asignatura){
+      $("#modal_opciones").modal("show")
+      asignatura_escojida = id_asignatura
+    }
+    
     function AbrirModalDocumento(id_asignatura){
+        if(asignatura_escojida != 0) id_asignatura = asignatura_escojida
         $("#id_asignatura").val(id_asignatura)
-        
+        $("#modal_opciones").modal("hide")
         $("#ModalDocumento").modal("show")
     }
 
@@ -350,6 +464,36 @@ header('Content-Type: text/html; charset=UTF-8');
                     Swal.fire(
                       'Proceso exitoso!',
                       'El documento se ha modificado correctamente',
+                      'success'
+                    ).then((result) => {
+                          if (result.value) {
+                            location.reload()
+                          }
+                        })
+                }
+            })
+            
+          }
+        })
+    }
+
+    function CambiarEstadoActividad(id_actividad){
+        Swal.fire({
+          title: '¿Esta seguro que desea cambiar de estado?',
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, cambiar!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.value) {
+            var url = "../../actividad/cambiar_estado_actividad/"+id_actividad
+            $.get(url, function(response) {
+                if(response.error == false){
+                    Swal.fire(
+                      'Proceso exitoso!',
+                      'La actividad se ha modificado correctamente',
                       'success'
                     ).then((result) => {
                           if (result.value) {
