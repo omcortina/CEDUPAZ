@@ -42,6 +42,7 @@ class AsignaturaController extends Controller
                 $validator = \Validator::make($request->except(['_token', 'sub_materias'])['materia_padre'], $asignatura->rules);
                 if (!$validator->fails()) {
                     $asignatura->fill($request->except(['_token','sub_materias'])['materia_padre']);
+                    $asignatura->id_persona = null;
                     $asignatura->save();
 
                     if(isset($post->sub_materias)){
@@ -93,7 +94,8 @@ class AsignaturaController extends Controller
                 $validator = \Validator::make($request->except(['_token', 'sub_materias'])['materia_padre'], $asignatura->rules);
                 if (!$validator->fails()) {
                     $asignatura->update($request->except(['_token'])['materia_padre']);
-
+                    $asignatura->id_persona = null;
+                    $asignatura->update();
                     $sub_materias = $post->sub_materias;
 
                     foreach ($sub_materias as $sub_materia) {

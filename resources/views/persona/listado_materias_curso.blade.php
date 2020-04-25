@@ -211,20 +211,20 @@
       </div>
       <div class="modal-body">
         <div class="row">
-            <input type="hidden" id="asignatura_para_nuevo_documento">
+            <input type="hidden" id="id_asignatura_escogida">
             <div class="col-lg-6">
                 <a onclick="AbrirModalDocumento(0)" href="#" class="btn btn-success" style="color: white; width: 100%"><i class="fa fa-book"></i> Nuevo documento</a>
             </div>
 
             <div class="col-lg-6">
-                <a href="{{ route('actividad/agregar_actividad', $asignatura->id_asignatura) }}" class="btn btn-info" style="color: white; width: 100%"><i class="fa fa-users"></i> Nueva actividad</a>
+                <a onclick="AgregarActividad()" class="btn btn-info" style="color: white; width: 100%"><i class="fa fa-users"></i> Nueva actividad</a>              
             </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
+
 {{ Form::open(array('method' => 'post', 'files' => true, 'route' => 'documento/subir_documento'))}}
     <div class="modal fade" id="ModalDocumento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -378,7 +378,14 @@
     var asignatura_escojida = 0
     function AbrirModalOpciones(id_asignatura){
       $("#modal_opciones").modal("show")
+      $("#id_asignatura_escogida").val(id_asignatura)
       asignatura_escojida = id_asignatura
+      
+    }
+
+    function AgregarActividad(){
+        asignatura_escojida = $("#id_asignatura_escogida").val()
+        location.href="../../actividad/agregar_actividad/"+asignatura_escojida 
     }
     
     function AbrirModalDocumento(id_asignatura){

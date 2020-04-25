@@ -41,7 +41,6 @@
 								                		<table class="table table-borderless table-striped table-earning">
 								            				<thead>
 								            					<tr>
-								                                    <th>Identificacion</th>
 								                                    <th>Estudiante</th>
 								                                    <th>Estado</th>
 								                                    <th><center>Ver entrega</center></th>
@@ -55,7 +54,6 @@
 								            				    @endphp
 								            				    @if ($entrega != null)
 								            				    	<tr>
-								                                    <td>{{$e->identificacion}}</td>
 								                                    <td>{{$e->nombre}} {{$e->apellido}}</td>
 								                                    <td>Entregado</td>
 								                                	<td><center><a title="Ver entrega" href="#" onclick="VerInformacionEntrega({{$entrega->id_entrega}})"><i class="fa fa-eye" style="color: #6c757d"></i></a></center></td>
@@ -69,7 +67,6 @@
 
 								            					@else
 								            						<tr>
-								                                    <td>{{$e->identificacion}}</td>
 								                                    <td>{{$e->nombre}} {{$e->apellido}}</td>
 								                                    <td>No entregado</td>
 								            					   </tr>
@@ -149,7 +146,11 @@
 	          $("#bodytableEntregas").append(fila)
 	        })
 			$("#calificacion").val(response.entrega.calificacion)
-	        $("#observaciones_entrega").html("<b>Observaciones:</b> "+response.entrega.observaciones)
+	        if(response.entrega.observaciones != null){
+				$("#observaciones_entrega").html("<b>Observaciones:</b> "+response.entrega.observaciones)
+			}else{
+				$("#observaciones_entrega").html("<b>Observaciones:</b> Sin observaciones")
+			}
 		})
 	}
 

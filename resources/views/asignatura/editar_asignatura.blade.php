@@ -50,7 +50,7 @@
                         <span class="help-block field-validation-valid" data-valmsg-for="cc-name" data-valmsg-replace="true"></span>
                     </div>
 
-                    <div class="form-group has-success">
+                    <div class="form-group has-success" style="display: none">
                         <label for="cc-name" class="control-label mb-1">Docente</label>
                         <select name="selectDocente" id="selectDocente" class="form-control">
                             <option value="0">Seleccione...</option>

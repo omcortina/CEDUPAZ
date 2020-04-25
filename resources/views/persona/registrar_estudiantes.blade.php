@@ -13,10 +13,10 @@
                     <h3 class="text-center title-2">Registrar Estudiante</h3>
                 </div>
                 <hr>
-                @if (session('mensaje_persona'))
-                <div id="msg" class="alert alert-success" >
+                @if (session('error_mensaje_persona'))
+                <div id="msg" class="alert alert-danger" >
                     
-                        <li>{{session('mensaje_persona')}}</li>
+                        <li>{{session('error_mensaje_persona')}}</li>
                 </div>
 
                 <script>
@@ -38,13 +38,13 @@
                 {{ Form::open(array('method' => 'post')) }}
                     <div class="form-group">
                         <label for="cc-payment" class="control-label mb-1">Identificacion</label>
-                        <input name="identificacion" type="text" class="form-control" aria-required="true" aria-invalid="false" value="{{$persona->identificacion}}">
+                        <input name="identificacion" type="text" class="form-control" aria-required="true" aria-invalid="false" value="{{$persona->identificacion}}" required>
                     </div>
 
                     <div class="form-group has-success">
                         <label for="cc-name" class="control-label mb-1">Nombre</label>
                         <input id="cc-name" value="{{$persona->nombre}}"name="nombre" type="text" class="form-control cc-name valid" data-val="true" data-val-required="Por favor digite el telefono"
-                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error">
+                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error" required>
                         <span class="help-block field-validation-valid" data-valmsg-for="cc-name" data-valmsg-replace="true"></span>
                     </div>
 
@@ -52,28 +52,28 @@
                         <label for="cc-number" class="control-label mb-1">Apellido</label>
                         <input id="cc-number" name="apellido" value="{{$persona->apellido}}" type="text" class="form-control cc-number identified visa" value="" data-val="true"
                             data-val-required="Please enter the card number" data-val-cc-number="Please enter a valid card number"
-                            autocomplete="cc-number">
+                            autocomplete="cc-number" required>
                         <span class="help-block" data-valmsg-for="cc-number" data-valmsg-replace="true"></span>
                     </div>
 
                     <div class="form-group has-success">
                         <label for="cc-name" class="control-label mb-1">Email</label>
                         <input id="cc-name" name="email" value="{{$persona->email}}" type="text" class="form-control cc-name valid" data-val="true" data-val-required="Por favor digite el telefono"
-                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error">
+                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error" required>
                         <span class="help-block field-validation-valid" data-valmsg-for="cc-name" data-valmsg-replace="true"></span>
                     </div>
 
                     <div class="form-group has-success">
                         <label for="cc-name" class="control-label mb-1">Telefono</label>
                         <input id="cc-name" name="telefono" value="{{$persona->telefono}}" type="text" class="form-control cc-name valid" data-val="true" data-val-required="Por favor digite el telefono"
-                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error">
+                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error" required>
                         <span class="help-block field-validation-valid" data-valmsg-for="cc-name" data-valmsg-replace="true"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="cc-payment" class="control-label mb-1">Sexo</label>
 
-                        <select name="id_dominio_tipo_sexo"  class="form-control">
+                        <select name="id_dominio_tipo_sexo"  class="form-control" required>
                             @php
                                 $tipos_de_sexo = \App\Dominio::all()->where('id_padre',11);
                             @endphp
@@ -87,21 +87,21 @@
                     <div class="form-group has-success">
                         <label for="cc-name" class="control-label mb-1">Username</label>
                         <input id="cc-name" name="username" value="{{$persona->username}}" type="text" class="form-control cc-name valid" data-val="true" data-val-required="Por favor digite el telefono"
-                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error">
+                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error" required>
                         <span class="help-block field-validation-valid" data-valmsg-for="cc-name" data-valmsg-replace="true"></span>
                     </div>
 
                     <div class="form-group has-success">
                         <label for="cc-name" class="control-label mb-1">Password</label>
                         <input id="cc-name" name="password" value="{{$persona->password}}" type="text" class="form-control cc-name valid" data-val="true" data-val-required="Por favor digite el telefono"
-                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error">
+                            autocomplete="cc-name" aria-required="true" aria-invalid="false" aria-describedby="cc-name-error" required>
                         <span class="help-block field-validation-valid" data-valmsg-for="cc-name" data-valmsg-replace="true"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="cc-payment" class="control-label mb-1">Grado</label>
 
-                        <select id="selectGrado"  class="form-control" onchange="if(this.value!=0){$('#divCurso').fadeIn()} else{$('#divCurso').fadeOut()} MostrarSubCursos()">
+                        <select id="selectGrado" required class="form-control" onchange="if(this.value!=0){$('#divCurso').fadeIn()} else{$('#divCurso').fadeOut()} MostrarSubCursos()">
                             <option value="0">Seleccione...</option>
                             @foreach ($cursos as $c)
                                 <option value="{{$c->id_curso}}">{{$c->nombre}}</option>
@@ -112,7 +112,7 @@
                      <div class="form-group" id="divCurso" style="display: none">
                         <label for="cc-payment" class="control-label mb-1">Curso</label>
 
-                        <select name="id_curso" id="selectCurso"  class="form-control">
+                        <select name="id_curso" id="selectCurso"  class="form-control" required>
                             
                         </select>
                      </div>

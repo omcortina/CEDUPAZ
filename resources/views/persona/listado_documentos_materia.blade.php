@@ -304,7 +304,11 @@
         $("#nombre_actividad").html("<b>Nombre:</b> "+response.actividad.nombre)
         $("#tipo_actividad").html("<b>Tipo:</b> "+response.tipo)
         $("#lapso_entrega_actividad").html("<b>Lapso de entrega:</b> "+response.actividad.fecha_inicio+" - "+response.actividad.fecha_fin)
-        $("#observaciones_actividad").html("<b>Observaciones:</b> "+response.actividad.observaciones)
+        if(response.actividad.observaciones != null){
+          $("#observaciones_actividad").html("<b>Observaciones:</b> "+response.actividad.observaciones)
+        }else{
+          $("#observaciones_actividad").html("<b>Observaciones:</b> Sin observaciones")
+        }
 
         response.documentos.forEach(function(documento){
           var fila = "<tr>"+

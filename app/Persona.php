@@ -62,18 +62,22 @@ class Persona extends Model
                 
             }
         }
+        
     	foreach ($cursos_padres as $curso_padre) {
     		
     		$hijos_encontrados = [];
+            $hijos_en_array = []; //aqui metemos solo el id del curso
     		foreach ($asignaturas as $asignatura) {
     			$curso = $asignatura->curso;
 
     			if ($curso->id_padre == $curso_padre->id_curso) {
-    				if (in_array($curso, $hijos_encontrados) == false){
+    				if (in_array($curso->id_curso, $hijos_en_array) == false){
     					array_push($hijos_encontrados, $curso);
+                        array_push($hijos_en_array, $curso->id_curso);
     				}
     			}
     		}
+            $hijos_en_array = [];
     		$curso_padre['hijos'] = $hijos_encontrados;
 
     	}

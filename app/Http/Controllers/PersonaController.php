@@ -109,6 +109,15 @@ class PersonaController extends Controller
                 session()->flash('error_mensaje_persona', $mensaje);
                 return redirect()->route('persona/listar_estudiantes');
             }
+
+            $sexo = $post->id_dominio_tipo_sexo;
+            $sexo = intval($sexo);
+
+            if($sexo == 0){
+                $mensaje = "El estudiante no se pudo registrar, el campo sexo es obligatorio";
+                session()->flash('error_mensaje_persona', $mensaje);
+                return redirect()->route('persona/listar_docentes');
+            }
             //este rescibe como parametros los 
             $validator = \Validator::make($request->except('_token'), $persona->rules);
             if (!$validator->fails()) {
@@ -154,7 +163,7 @@ class PersonaController extends Controller
             if($sexo == 0){
                 $mensaje = "El estudiante no se pudo registrar, el campo sexo es obligatorio";
                 session()->flash('error_mensaje_persona', $mensaje);
-                return redirect()->route('persona/listar_estudiantes');
+                return redirect()->route('persona/registrar_estudiantes');
             }
 
             $request['id_dominio_tipo_persona'] = 10;
