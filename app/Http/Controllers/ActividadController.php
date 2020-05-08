@@ -67,7 +67,7 @@ class ActividadController extends Controller
     		$errors = $validator->messages()->get('*');
         }
 
-    	return view("actividad/agregar_actividad", compact("asignatura"), compact("errors"));
+    	return view("actividad.agregar_actividad", compact("asignatura"), compact("errors"));
     }
 
     public function EditarActividad(Request $request, $id_actividad){
