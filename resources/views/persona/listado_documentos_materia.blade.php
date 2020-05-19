@@ -352,9 +352,28 @@ header("Content-Type: text/html; charset=utf-8");
     }
 
     function VerVideo(url){
-        var url_video = url.replace("watch?v=", "embed/");
-        document.getElementById('frame_video').src = url_video
-        $("#ModalVideo").modal("show")
+        var url_video = url
+        var is_punto_be = url_video.includes("youtu.be")
+        var is_youtube_punto_com = url_video.includes("www.youtube.com")
+        console.log(is_youtube_punto_com)
+        if(is_punto_be){
+            url_video = url.replace("youtu.be/", "www.youtube.com/")
+            console.log(url_video)
+            url_video = url_video.split("www.youtube.com/")
+            var primera_parte = url_video[0]+("www.youtube.com/")
+            var segunda_parte = url_video[1]
+            var url_completa = primera_parte+"embed/"+segunda_parte
+            document.getElementById('frame_video').src = url_completa  
+            $("#ModalVideo").modal("show")
+        }
+        
+        if(is_youtube_punto_com){
+            url_video = url.replace("watch?v=", "embed/")
+            url_video = url_video.split("&")
+            var url_nueva = url_video[0]
+            document.getElementById('frame_video').src = url_nueva  
+            $("#ModalVideo").modal("show")
+        }
     }
 
     function VerInformacion(id_actividad){
