@@ -28,11 +28,10 @@ class EntregaController extends Controller
 		if ($post) {
 			$entrega = new Entrega;
 			$post = (object) $post;
-			$validator = \Validator::make($request->except(['_token', 'archivos']), $entrega->rules);
-			if (!$validator->fails()){
 
 				$entrega->fill($request->except(['_token', 'archivos']));
 				$entrega->id_estudiante = session('id_usuario');
+				$entrega->id_actividad = $actividad->id_actividad;
 				$entrega->id_estado = 26;
 				
 				if ($entrega->save()) {
@@ -57,7 +56,7 @@ class EntregaController extends Controller
          			session()->flash('mensaje_entrega', $mensaje);
             		return redirect()->route('asignatura/listar_documentos_materias', ['id_asignatura' => $asignatura->id_asignatura]);
     			}
-			}
+			
 			$errors = $validator->messages()->get('*');
 		}
 		return view("entrega.agregar_entrega", compact(["actividad", "asignatura"]), compact("errors"));
@@ -77,8 +76,8 @@ class EntregaController extends Controller
 		if($fecha_actual >= $fecha_inicio and $fecha_actual <= $fecha_fin){
 			if($post){
 				$post = (object) $post;
-				$validator = \Validator::make($request->except(['_token', 'archivos']), $entrega->rules);
-				if (!$validator->fails()) {
+
+
 					$entrega->update($request->except(['_token', 'archivos']));
 					if(isset($post->archivos)){
 	    				foreach ($entrega->documentos as $documento) {
@@ -110,7 +109,7 @@ class EntregaController extends Controller
 		    		$mensaje = "Entrega modificada";
 		 			session()->flash('mensaje_entrega', $mensaje);
 		    		return redirect()->route('asignatura/listar_documentos_materias', ['id_asignatura' => $asignatura->id_asignatura]);
-				}
+				
 				$errors = $validator->messages()->get('*');
 			}
 			return view("entrega.editar_entrega", compact(["entrega", "asignatura"]), compact("errors"));
@@ -120,13 +119,25 @@ class EntregaController extends Controller
 		return redirect()->route('asignatura/listar_documentos_materias', ['id_asignatura' => $asignatura->id_asignatura]);
 	}
 
-	public function AgregarCalificacion($id_entrega, $calificacion){
-		$entrega = Entrega::finD($id_entrega);
-		$entrega->calificacion = $calificacion;
+	public function AgregarCalificacion(Request $request, $id_entrega){
+		$post = $request->all();
+		$entrega = Entrega::find($id_entrega);
 		$entrega->id_estado = 25;
-		$entrega->update();
-		$mensaje = "Calificacion asignada correctamente";
-		$error = false;
+		$error = true;
+		$mensaje = "";
+		if($post){
+			$post = (object) $post;
+			if (isset($post->calificacion)) {
+				$entrega->calificacion = $post->calificacion;
+				$entrega->anotaciones = $post->anotaciones;
+				$entrega->update();
+				$mensaje = "Calificacion asignada correctamente";
+				$error = false;
+			}else{
+				$mensaje = "Debe agregar una calificacion obligatoriamente";
+				$error = true;
+			}		
+		}
 		return response()->json([
 			'mensaje'=>$mensaje,
 			'entrega'=>$entrega,

@@ -73,6 +73,16 @@
                 @endif
             <div class="card-body">
             	<div class="col-lg-12">
+                    @if (session('mensaje_error_actividad'))
+                        <div id="msg" class="alert alert-danger" >
+                            
+                                <li>{{session('mensaje_actividad')}}</li>
+                        </div>
+
+                        <script>
+                            setTimeout(function(){ $('#msg').fadeOut() }, 4000);
+                        </script>
+                    @endif
                 	
                     <div class="au-card au-card--no-shadow au-card--no-pad m-b-40 au-card--border">
                         <div class="au-card-title" style="background-image:url('{{ asset('Diseño/images/bg-title-01.jpg') }}');">
@@ -87,7 +97,7 @@
                             <div class="au-task-list js-scrollbar3">
                                 <div>
                                     <div class="au-task__item-inner">
-                                    	{{ Form::open(array('method' => 'post', 'files' => true)) }}
+                                    	{{ Form::open(array('method' => 'post', 'id'=>'form_agregar_actividad', 'files' => true)) }}
                                     	<input type="hidden" name="id_asignatura" value="{{$asignatura->id_asignatura}}">
 	                                        <div class="row">	
 	                                        	<div class="col-lg-4">
@@ -144,14 +154,14 @@
 	                                        	<div class="col-md-12">
 									              <div class="form-group files">
 									                <label>Subir archivos </label>
-									                <input type="file" class="form-control" multiple="multiple" name="archivos[]">
+									                <input type="file" class="form-control" multiple="multiple" name="archivos[]" id="archivos[]">
 									              </div>
 											  </div>
 	                                        </div>
 	                                      <div class="row">
 	                                      	<div class="col-lg-3"></div>
 	                                      	<div class="col-lg-6">
-	                                      		<button type="submit" class="btn btn-primary" style="width: 100%">Subir</button>
+	                                      		<button type="button" onclick="ValidarDocumentosActividad()" class="btn btn-primary" style="width: 100%">Subir</button>
 	                                      	</div>
 	                                      </div>
                                         {{ Form::close() }}
@@ -166,6 +176,16 @@
     </div>
 </div>
 <script>
+    function ValidarDocumentosActividad(){
+        if(document.getElementById("archivos[]").files.length == 0 ){ 
+            alert("Debe seleccionar por lo menos un archivo")
+            return false;
+        }
+        
+        $("#form_agregar_actividad").submit()
+        //aqui todo esta bien
+    }
+
 	$(document).ready(function(){
 		$('input[name="fechas"]').daterangepicker({
 	     timePicker: true,

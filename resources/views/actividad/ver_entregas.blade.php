@@ -122,6 +122,10 @@
             <label for="cc-payment" class="control-label mb-1">Calificacion</label>
             <input id="calificacion" type="text" class="form-control" aria-required="true" aria-invalid="false" required>
         </div>
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1">Anotaciones</label>
+            <textarea rows="4" id="anotaciones"  class="form-control"></textarea>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -130,6 +134,9 @@
     </div>
   </div>
 </div>
+
+{{ Form::open(array('method' => 'post', 'id'=>'formAgregarCalificacion')) }}
+{{ Form::close() }}
 
 <script>
 	function VerInformacionEntrega(id_entrega){
@@ -146,6 +153,7 @@
 	          $("#bodytableEntregas").append(fila)
 	        })
 			$("#calificacion").val(response.entrega.calificacion)
+			$("#anotaciones").val(response.entrega.anotaciones)
 	        if(response.entrega.observaciones != null){
 				$("#observaciones_entrega").html("<b>Observaciones:</b> "+response.entrega.observaciones)
 			}else{
@@ -155,13 +163,25 @@
 	}
 
 	function AgregarCalificacion(){
+		var data_form = $("#formAgregarCalificacion").serialize()
+        var token = data_form.split("&")[0].split("=")[1]
 		var id_entrega = $("#id_entrega").val()
 		var calificacion = $("#calificacion").val()
-		var url="../../entrega/agregar_calificacion/"+id_entrega+"/"+calificacion
-		$.get(url, function(response){
+		var anotaciones = $("#anotaciones").val()
+		var url="../../entrega/agregar_calificacion/"+id_entrega
+		var data = {
+			"_token":token,
+			"anotaciones":anotaciones,
+			"calificacion":calificacion
+		}
+		$.post(url, data,  function(response){
 			if(response.error==false){
 				swal.fire("Proceso Exitoso",response.mensaje,"success").then((result)=>{
                     if(result.value==true) location.reload()
+                })
+			}else{
+				swal.fire("Error",response.mensaje,"warning").then((result)=>{
+                    
                 })
 			}
 		})

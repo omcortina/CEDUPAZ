@@ -23,6 +23,7 @@ class ActividadController extends Controller
 
     public function AgregarActividad(Request $request, $id_asignatura)
     {
+        
     	$asignatura = Asignatura::find($id_asignatura);
     	$post = $request->all();
 		
@@ -38,31 +39,32 @@ class ActividadController extends Controller
     		$validator = \Validator::make($request->except(['_token', 'archivos', 'fechas']), $actividad->rules);
 
     		if (!$validator->fails()) {
-
     			$actividad->fill($request->except(['_token', 'archivos', 'fechas']));
-    			if ($actividad->save()) {
-    				foreach ($post->archivos as $archivo) {
-	    				$documento = new Documento;
-	    				$documento->id_actividad=$actividad->id_actividad;
-			            $documento->nombre=$archivo->getClientOriginalName();
-			            $documento->id_dominio_tipo=21;
-			            $documento->estado_oculto=1;
-			            $documento->descripcion="Documento de la actividad ".$actividad->nombre; 
-			            $documento->save();
-			                 //obtenemos el nombre del archivo
-		                $fecha_actual = date('d-m-Y_H_i_ s');
-		                $nombre = $documento->id_documento."_".$fecha_actual.'_'.$archivo->getClientOriginalName();
-		                $ruta = '/files';
-		                 
-		                Storage::disk('public')->put($ruta."/".$nombre,  \File::get($archivo));
-		                $documento->url = $nombre;
-		                $documento->save();
-		            }
-		            $mensaje = "Actividad subida";
-         			session()->flash('mensaje_actividad', $mensaje);
-            		return redirect()->route('persona/listar_materias_curso', ['id_curso' => $asignatura->id_curso]);
-    			}
 
+                
+        			if ($actividad->save()) {
+                        foreach ($post->archivos as $archivo) {
+                            $documento = new Documento;
+                            $documento->id_actividad=$actividad->id_actividad;
+                            $documento->nombre=$archivo->getClientOriginalName();
+                            $documento->id_dominio_tipo=21;
+                            $documento->estado_oculto=1;
+                            $documento->descripcion="Documento de la actividad ".$actividad->nombre; 
+                            $documento->save();
+                                 //obtenemos el nombre del archivo
+                            $fecha_actual = date('d-m-Y_H_i_ s');
+                            $nombre = $documento->id_documento."_".$fecha_actual.'_'.$archivo->getClientOriginalName();
+                            $ruta = '/files';
+                             
+                            Storage::disk('public')->put($ruta."/".$nombre,  \File::get($archivo));
+                            $documento->url = $nombre;
+                            $documento->save();
+                        }
+                        $mensaje = "Actividad subida";
+                        session()->flash('mensaje_actividad', $mensaje);
+                        return redirect()->route('persona/listar_materias_curso', ['id_curso' => $asignatura->id_curso]);
+                    }	
+    			
     		}
     		$errors = $validator->messages()->get('*');
         }
@@ -149,5 +151,34 @@ class ActividadController extends Controller
         $estudiantes = $curso->estudiantes();
 
         return view("actividad.ver_entregas", compact(["asignatura", "estudiantes", "actividad"]));
+    }
+
+    public function EliminarActividad($id_actividad){
+        $actividad = Actividad::find($id_actividad);
+        $documentos = $actividad->documentos;
+        $entregas = $actividad->entregas;
+        if(count($entregas) > 0){
+           $mensaje = "No se puede eliminar la actividad, existen entregas asignadas";
+           return response()->json([
+                        'mensaje'=>$mensaje,
+                        'error' =>true
+                    ]);
+        }else{
+
+            foreach ($documentos as $documento) {
+                $ruta = '/files/'.$documento->url;
+                   
+                $exists =Storage::disk('public')->exists($ruta);
+                if($exists) Storage::disk('public')->delete($ruta);
+                $documento->delete();
+            }
+           
+            $actividad->delete();
+            $mensaje = "Actividad eliminada exitosamente";
+            return response()->json([
+                            'mensaje'=>$mensaje,
+                            'error' =>false
+                        ]);
+        }      
     }
 }

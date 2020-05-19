@@ -88,6 +88,16 @@ class PersonaController extends Controller
         return view("persona.listado_estudiantes",compact('estudiantes'));
     }
 
+    public function FlitroEstudiantes(){
+        $estudiantes = Persona::all()->where('id_dominio_tipo_persona', 10)->where('estado', 1);
+        $nuevos_estudiantes=[];
+        foreach ($estudiantes as $key => $estudiante) {
+            $estudiante->sexo->nombre;
+            array_push($nuevos_estudiantes, $estudiante);
+        }
+        return response()->json($nuevos_estudiantes);
+    }
+
 
     public function GuardarDocente(Request $request){
         $post = $request->all();

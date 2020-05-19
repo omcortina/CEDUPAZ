@@ -27,6 +27,8 @@ Route::get('persona/listar_docentes','PersonaController@ListarDocentes')->name('
 
 Route::get('persona/listar_estudiantes','PersonaController@ListarEstudiantes')->name('persona/listar_estudiantes');
 
+Route::get('persona/filtro_estudiantes','PersonaController@FlitroEstudiantes')->name('persona/filtro_estudiantes');
+
 Route::any('persona/registrar_docentes', 'PersonaController@GuardarDocente')->name('persona/registrar_docentes');
 
 Route::any('persona/registrar_estudiantes', 'PersonaController@GuardarEstudiante')->name('persona/registrar_estudiantes');
@@ -75,6 +77,8 @@ Route::any('actividad/consultar_actividad/{id_actividad}', 'ActividadController@
 
 Route::get('actividad/cambiar_estado_actividad/{id_actividad}', 'ActividadController@CambiarEstado')->name('actividad/cambiar_estado_actividad');
 
+Route::get('actividad/eliminar_actividad/{id_actividad}', 'ActividadController@EliminarActividad')->name('actividad/eliminar_actividad');
+
 Route::any('documento/editar_documento', 'DocumentoController@EditarDocumento')->name('documento/editar_documento');
 
 Route::get('documento/eliminar_documento/{id_documento}', 'DocumentoController@EliminarDocumento')->name('documento/eliminar_documento');
@@ -95,7 +99,11 @@ Route::any('actividad/ver_entregas/{id_actividad}', 'ActividadController@VerEntr
 
 Route::get('entrega/consultar_entrega/{id_entrega}', 'EntregaController@ConsultarEntrega')->name('entrega/consultar_entrega');
 
-Route::get('entrega/agregar_calificacion/{id_entrega}/{calificacion}', 'EntregaController@AgregarCalificacion')->name('entrega/agregar_calificacion');
+Route::any('entrega/agregar_calificacion/{id_entrega}', 'EntregaController@AgregarCalificacion')->name('entrega/agregar_calificacion');
+
+Route::get('curso/consultar_estudiantes/{id_curso}', 'CursoController@ConsultarEstudiantes')->name('curso/consultar_estudiantes');
+
+
 
 
 

@@ -1,4 +1,13 @@
 <title>Listado Mis Cursos</title>
+@php
+header("Content-Type: text/html; charset=utf-8");
+  function quitar_tildes($cadena){
+    $no_permitidas= array ("á","é","í","ó","ú","Á","É","Í","Ó","Ú","ñ","À","Ã","Ì","Ò","Ù");
+    $permitidas= array ("a","e","i","o","u","A","E","I","O","U","n","N","A","E","I","O","U");
+    $texto = str_replace($no_permitidas, $permitidas ,$cadena);
+    return $texto;
+  }
+@endphp
 @extends('layouts.main_estudiante')
 @section('content')
 <style type="text/css">
@@ -86,7 +95,13 @@
                                                   </h5>
 
                                                   <h5 class="task">
-                                                    <a href="#"><b>Calificacion: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$entrega->calificacion)))}}</a>
+                                                    <a href="#"><b>Calificación: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$entrega->calificacion)))}}</a>
+                                                  </h5>
+                                                  <h5 class="task">
+                                                    @php
+                                                      header("Content-Type: text/html; charset=utf-8");
+                                                    @endphp
+                                                    <a href="#"><b>Anotaciones: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,quitar_tildes($entrega->anotaciones))))}}</a>
                                                   </h5>
                                               @else
                                               <h5 class="task">

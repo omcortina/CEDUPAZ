@@ -8,7 +8,7 @@ class Entrega extends Model
 {
     protected $table = 'entrega';
     protected $primaryKey = 'id_entrega';
-    protected $fillable = ['fecha', 'observaciones', 'id_estado', 'calificacion', 'id_actividad', 'id_estudiante'];
+    protected $fillable = ['fecha', 'observaciones', 'id_estado', 'calificacion', 'anotaciones', 'id_actividad', 'id_estudiante'];
 
 
 	public function actividad(){

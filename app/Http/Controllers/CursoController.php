@@ -15,6 +15,19 @@ class CursoController extends Controller
         return view("curso.listado_cursos",compact('cursos'));
     }
 
+    public function ConsultarEstudiantes($id_curso){
+        $curso = Curso::find($id_curso);
+        $estudiantes = $curso->estudiantes();
+        $nuevos_estudiantes=[];
+        foreach ($estudiantes as $key => $estudiante) {
+            $estudiante->sexo->nombre;
+            array_push($nuevos_estudiantes, $estudiante);
+        }
+        return response()->json($nuevos_estudiantes);
+    }
+
+    
+
     public function ListarEstudiantesPorCurso($id_curso){
         $curso = Curso::find($id_curso);
         $estudiantes = $curso->estudiantes();

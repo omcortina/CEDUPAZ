@@ -87,21 +87,21 @@
                             <div class="au-task-list js-scrollbar3">
                                 <div>
                                     <div class="au-task__item-inner">
-                                    	{{ Form::open(array('method' => 'post', 'files' => true)) }}
+                                    	{{ Form::open(array('method' => 'post', 'id'=>'form_agregar_entrega', 'files' => true)) }}
                                     	<input type="hidden" name="id_actividad" value="{{$actividad->id_actividad}}">
 
                                     		<div class="row">
 	                                        	<div class="col-md-12">
 									              <div class="form-group files">
 									                <label>Subir archivos </label>
-									                <input type="file" class="form-control" multiple="multiple" name="archivos[]">
+									                <input type="file" class="form-control" multiple="multiple" name="archivos[]" id="archivos[]">
 									              </div>
 											  </div>
 	                                        </div>
 	                                        <div class="row">
 							                    <div class="col-lg-12">
                                                     <div class="form-group">
-                                                        <label for="cc-payment" class="control-label mb-1">Obervaciones</label>
+                                                        <label for="cc-payment" class="control-label mb-1">Observaciones</label>
                                                         <textarea rows="4" name="observaciones"  class="form-control"></textarea>
                                                     </div>
                                             	</div>
@@ -110,7 +110,7 @@
 	                                      <div class="row">
 	                                      	<div class="col-lg-3"></div>
 	                                      	<div class="col-lg-6">
-	                                      		<button type="submit" class="btn btn-primary" style="width: 100%">Subir</button>
+	                                      		<button type="button" onclick="ValidarEntregaAdd()" class="btn btn-primary" style="width: 100%">Subir</button>
 	                                      	</div>
 	                                      </div>
                                         {{ Form::close() }}
@@ -125,3 +125,14 @@
     </div>
 </div>
 @endsection
+<script>
+    function ValidarEntregaAdd(){
+        if(document.getElementById("archivos[]").files.length == 0 ){ 
+            alert("Debe seleccionar por lo menos un archivo")
+            return false;
+        }
+        
+        $("#form_agregar_entrega").submit()
+        //aqui todo esta bien
+    }
+</script>

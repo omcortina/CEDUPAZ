@@ -1,5 +1,13 @@
 <title>Listado Mis Cursos</title>
-
+@php
+header("Content-Type: text/html; charset=utf-8");
+  function quitar_tildes($cadena){
+    $no_permitidas= array ("á","é","í","ó","ú","Á","É","Í","Ó","Ú","ñ","À","Ã","Ì","Ò","Ù");
+    $permitidas= array ("a","e","i","o","u","A","E","I","O","U","n","N","A","E","I","O","U");
+    $texto = str_replace($no_permitidas, $permitidas ,$cadena);
+    return $texto;
+  }
+@endphp
 @extends('layouts.main_docente')
 @section('content')
 <style type="text/css">
@@ -92,13 +100,13 @@
                                                     </a>
                                                 </h5>
                                                 <h5 class="task">
-                                                    <a href="#"><b>Obervaciones: </b> <i style="margin-left: 10px" class="fa fa-comment" title="{{ucwords(strtolower(str_replace("ñ", "n" ,$actividad->observaciones)))}}"></i></a>
+                                                    <a href="#"><b>Observaciones: </b> <i style="margin-left: 10px" class="fa fa-comment" title="{{ucwords(strtolower(str_replace("ñ", "n",quitar_tildes($actividad->observaciones))))}}"></i></a>
                                                 </h5>
                                             </div>
                                             <div class="col-lg-5">
                                                 <br>
 
-                                                <a title="Eliminar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#"><i class="fa fa-trash"></i></a>
+                                                <a title="Eliminar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="EliminarActividad({{$actividad->id_actividad}})"><i class="fa fa-trash"></i></a>
 
                                                 <a title="Ver entregas" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('actividad/ver_entregas', $actividad->id_actividad) }}"><i class="fa fa-check-square"></i></a>
 
@@ -225,7 +233,7 @@
   </div>
 </div>
 
-{{ Form::open(array('method' => 'post', 'files' => true, 'route' => 'documento/subir_documento'))}}
+{{ Form::open(array('method' => 'post', 'files' => true, 'id'=>'form_documento', 'route' => 'documento/subir_documento'))}}
     <div class="modal fade" id="ModalDocumento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -267,7 +275,7 @@
 
             <div class="form-group" id="divDocumento" style="display: none">
                 <label for="cc-payment" class="control-label mb-1">Documento</label>
-                <input name="archivo" type="file" id="file-input" name="file-input" class="form-control-file">
+                <input name="archivo" type="file" id="archivo" class="form-control-file">
             </div>
 
             <div class="form-group" id="divUrlVideo" style="display: none">
@@ -283,7 +291,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            <button type="submit" class="btn btn-primary">Subir</button>
+            <button type="button" onclick="ValidarDocumentoAdd()" class="btn btn-primary">Subir</button>
           </div>
         </div>
       </div>
@@ -333,7 +341,7 @@
 
             <div class="form-group" id="divDocumentoEdit" style="display: none">
                 <label for="cc-payment" class="control-label mb-1">Documento</label>
-                <input name="archivo" type="file" id="file-input" name="file-input" class="form-control-file">
+                <input name="archivo" type="file" id="archivo_edit" name="file-input" class="form-control-file">
             </div>
 
             <div class="form-group" id="divUrlVideoEdit" style="display: none">
@@ -349,12 +357,13 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <button type="submit"  class="btn btn-primary">Guardar Cambios</button>
           </div>
         </div>
       </div>
     </div>
 {{ Form::close() }}
+
 
 <div class="modal fade" id="ModalVideo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document" style="max-width: 600px">
@@ -375,6 +384,18 @@
       </div>
 </div>
 <script>
+    function ValidarDocumentoAdd(){
+        var tipo_documento = $("#id_dominio_tipo").val()
+        if(tipo_documento != 14){
+            if(document.getElementById("archivo").files.length == 0 ){ 
+                alert("Debe seleccionar un archivo valido.")
+                return false;
+            }
+        }
+        $("#form_documento").submit()
+        //aqui todo esta bien
+    }
+
     var asignatura_escojida = 0
     function AbrirModalOpciones(id_asignatura){
       $("#modal_opciones").modal("show")
@@ -398,7 +419,6 @@
     function AbrirModalDocumentoEdit(id_documento){
       $("#ModalDocumentoEdit").modal("show")
       var url = "../../documento/consultar_documento/"+id_documento
-      console.log(url)
       $.get(url, function(response){
         $("#id_asignatura_documento").val(response.id_asignatura)
         $("#id_documento").val(response.id_documento)
@@ -418,9 +438,26 @@
     }
 
     function VerVideo(url){
-        var url_video = url.replace("watch?v=", "embed/");
-        document.getElementById('frame_video').src = url_video
-        $("#ModalVideo").modal("show")
+        var url_video = url
+        var is_punto_be = url_video.includes("youtu.be")
+        var is_youtube_punto_com = url_video.includes("www.youtube.com")
+        if(is_punto_be){
+            url_video = url.replace("youtu.be/", "www.youtube.com/")
+            url_video = url_video.split("www.youtube.com/")
+            var primera_parte = url_video[0]+("www.youtube.com/")
+            var segunda_parte = url_video[1]
+            var url_completa = primera_parte+"embed/"+segunda_parte
+            document.getElementById('frame_video').src = url_completa  
+            $("#ModalVideo").modal("show")
+        }
+        
+        if(is_youtube_punto_com){
+            url_video = url.replace("watch?v=", "embed/")
+            url_video = url_video.split("&")
+            var url_nueva = url_video[0]
+            document.getElementById('frame_video').src = url_nueva  
+            $("#ModalVideo").modal("show")
+        }  
     }
 
     function EliminarDocumento(id_documento){
@@ -447,6 +484,43 @@
                             location.reload()
                           }
                         })
+                }
+            })
+            
+          }
+        })
+    }
+
+    function EliminarActividad(id_actividad){
+        Swal.fire({
+          title: '¿Esta seguro que desea eliminar?',
+          text: "La actividad se eliminara de forma permanente!",
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, eliminar!',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.value) {
+            var url = "../../actividad/eliminar_actividad/"+id_actividad
+            $.get(url, function(response) {
+                if(response.error == false){
+                    Swal.fire(
+                      'Eliminado!',
+                      response.mensaje,
+                      'success'
+                    ).then((result) => {
+                          if (result.value) {
+                            location.reload()
+                          }
+                        })
+                }else{
+                    Swal.fire(
+                      'Error!',
+                      response.mensaje,
+                      'warning'
+                    )
                 }
             })
             

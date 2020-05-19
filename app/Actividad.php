@@ -32,6 +32,6 @@ class Actividad extends Model
     }
 
     function entregas(){
-        return $this->hasMany(Entrega::class, 'id_entrega');
+        return $this->hasMany(Entrega::class, 'id_actividad');
     }
 }

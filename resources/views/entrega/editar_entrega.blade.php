@@ -101,16 +101,37 @@
 	                                        <div class="row">
 							                    <div class="col-lg-12">
                                                     <div class="form-group">
-                                                        <label for="cc-payment" class="control-label mb-1">Obervaciones</label>
+                                                        <label for="cc-payment" class="control-label mb-1">Observaciones</label>
                                                         <textarea rows="4" name="observaciones"  class="form-control">{{$entrega->observaciones}}</textarea>
                                                     </div>
                                             	</div>
-								                
-	                                        </div>                                
+	                                        </div>
+
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <label>Documentos</label>
+                                                    <div class="table-responsive table--no-card m-b-30">
+                                                        <table class="table table-borderless table-striped table-earning">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Nombre</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="bodytable_documentos">
+                                                                @foreach ($entrega->documentos as $e)
+                                                                    <tr>
+                                                                    <td>{{$e->nombre}}</td>
+                                                                   </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>                                
 	                                      <div class="row">
 	                                      	<div class="col-lg-3"></div>
 	                                      	<div class="col-lg-6">
-	                                      		<button type="submit" class="btn btn-primary" style="width: 100%">Subir</button>
+	                                      		<button type="submit" class="btn btn-primary" style="width: 100%">Guardar Cambios</button>
 	                                      	</div>
 	                                      </div>
                                         {{ Form::close() }}
@@ -125,3 +146,20 @@
     </div>
 </div>
 @endsection
+
+<script>
+    $(document).on('change', 'input[type=file]', function(e) {
+        $("#bodytable_documentos").html('')
+       for (var i = 0; i < e.target.files.length; i++) {
+           var TmpPath = URL.createObjectURL(e.target.files[i]);
+            var nombre =  e.target.files[i].name;
+            console.log(nombre)
+            //var size =  e.target.files[i].size;
+            //var dosmb = 1024 * 1024 * 2;
+            var fila = "<tr>"+
+                        "<td>"+nombre+"</td>"+
+                       "</tr>"
+            $("#bodytable_documentos").append(fila)
+       }
+    })
+</script>

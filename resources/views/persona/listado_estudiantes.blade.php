@@ -9,12 +9,28 @@
             <div class="card-header">Listado de estudiantes</div>
             <div class="card-body">
             <div class="row">
-	            <div class="col-lg-7">
+	            <div class="col-lg-4">
                     <a class="btn btn-primary" href="{{ route('persona/registrar_estudiantes')}}">
                         <i>Nuevo</i>
-                    </a>
-	            </div>
-	            <div class="col-lg-5">
+                    </a>        
+                </div>
+                <div class="col-lg-1">
+                    <label for="cc-payment" class="control-label mb-1">Curso</label>
+                </div>
+                <div class="col-lg-3">
+                        <div class="form-group">
+                        <select id="selectCurso"  class="form-control" onchange="ConsultarEstudiantes()" required>
+                            @php
+                                $cursos = \App\Curso::all()->where('id_padre', !null);
+                            @endphp
+                                <option value="0">Todos</option>
+                                @foreach ($cursos as $c)
+                                    <option value="{{$c->id_curso}}">{{$c->nombre}}</option>
+                                @endforeach
+                        </select>
+                     </div>
+                </div>
+	            <div class="col-lg-4">
 	            <div class="input-group">
                     <div class="input-group-btn">
                         <button class="btn btn-primary" style="margin-right: 5px; margin-top: 4px">
@@ -91,4 +107,49 @@
 </div>
 </div>
 @endsection
+
+<script>
+    function ConsultarEstudiantes() {
+        $("#bodytable").html('')
+        var id_curso = $("#selectCurso").val()
+        if(id_curso != 0){
+            var url = "../curso/consultar_estudiantes/"+id_curso
+            $.get(url, function(response){
+                response.forEach(function(nuevos_estudiantes){
+                    var fila =  "<tr onclick=\"location.href = '../persona/editar_estudiante/"+nuevos_estudiantes.id_persona+"'\">"+
+                                    "<td>"+nuevos_estudiantes.id_persona+"</td>"+
+                                    "<td>"+nuevos_estudiantes.identificacion+"</td>"+
+                                    "<td>"+nuevos_estudiantes.nombre+"</td>"+
+                                    "<td>"+nuevos_estudiantes.apellido+"</td>"+
+                                    "<td>"+nuevos_estudiantes.email+"</td>"+
+                                    "<td>"+nuevos_estudiantes.telefono+"</td>"+
+                                    "<td>"+nuevos_estudiantes.sexo.nombre+"</td>"+
+                                    "<td>"+nuevos_estudiantes.username+"</td>"+
+                                    "<td>"+nuevos_estudiantes.password+"</td>"+
+                                "</tr>"
+                $("#bodytable").append(fila)   
+                })
+            })
+        }else{
+            url = "../persona/filtro_estudiantes"
+            $.get(url, function(response){
+                response.forEach(function(nuevos_estudiantes){
+                    var fila =  "<tr onclick=\"location.href = '../persona/editar_estudiante/"+nuevos_estudiantes.id_persona+"'\">"+
+                                    "<td>"+nuevos_estudiantes.id_persona+"</td>"+
+                                    "<td>"+nuevos_estudiantes.identificacion+"</td>"+
+                                    "<td>"+nuevos_estudiantes.nombre+"</td>"+
+                                    "<td>"+nuevos_estudiantes.apellido+"</td>"+
+                                    "<td>"+nuevos_estudiantes.email+"</td>"+
+                                    "<td>"+nuevos_estudiantes.telefono+"</td>"+
+                                    "<td>"+nuevos_estudiantes.sexo.nombre+"</td>"+
+                                    "<td>"+nuevos_estudiantes.username+"</td>"+
+                                    "<td>"+nuevos_estudiantes.password+"</td>"+
+                                "</tr>"
+                $("#bodytable").append(fila)   
+                })
+            })
+        }
+        
+    }
+</script>
 
