@@ -144,7 +144,7 @@
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div class="form-group">
-                                                        <label for="cc-payment" class="control-label mb-1">Obervaciones</label>
+                                                        <label for="cc-payment" class="control-label mb-1">Observaciones</label>
                                                         <input name="observaciones" type="text" class="form-control" aria-required="true" aria-invalid="false" value="">
                                                     </div>
                                                 </div>
@@ -178,7 +178,7 @@
 <script>
     function ValidarDocumentosActividad(){
         if(document.getElementById("archivos[]").files.length == 0 ){ 
-            alert("Debe seleccionar por lo menos un archivo")
+            Swal.fire('Error!',"Debe seleccionar por lo menos un archivo",'warning')
             return false;
         }
         

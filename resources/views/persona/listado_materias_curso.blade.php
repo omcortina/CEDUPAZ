@@ -388,7 +388,7 @@ header("Content-Type: text/html; charset=utf-8");
         var tipo_documento = $("#id_dominio_tipo").val()
         if(tipo_documento != 14){
             if(document.getElementById("archivo").files.length == 0 ){ 
-                alert("Debe seleccionar un archivo valido.")
+                Swal.fire('Error!',"Debe seleccionar un archivo valido",'warning')
                 return false;
             }
         }

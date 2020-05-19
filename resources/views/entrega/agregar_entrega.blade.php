@@ -128,7 +128,7 @@
 <script>
     function ValidarEntregaAdd(){
         if(document.getElementById("archivos[]").files.length == 0 ){ 
-            alert("Debe seleccionar por lo menos un archivo")
+            Swal.fire('Error!',"Debe seleccionar por lo menos un archivo",'warning')
             return false;
         }
         
