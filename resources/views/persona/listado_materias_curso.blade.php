@@ -86,7 +86,7 @@ header("Content-Type: text/html; charset=utf-8");
                                 <div class="{{$colores[$contador]}}">
                                     <div class="au-task__item-inner" id="div_documento">
                                         <div class=row>
-                                            <div class="col-lg-7">
+                                            <div class="col-lg-9">
                                                 <h5 class="task">
                                                     <a href="#"><b>Nombre: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$actividad->nombre)))}}</a>
                                                 </h5>
@@ -103,11 +103,9 @@ header("Content-Type: text/html; charset=utf-8");
                                                     <a href="#"><b>Observaciones: </b> <i style="margin-left: 10px" class="fa fa-comment" title="{{ucwords(strtolower(str_replace("ñ", "n",quitar_tildes($actividad->observaciones))))}}"></i></a>
                                                 </h5>
                                             </div>
-                                            <div class="col-lg-5">
-                                                <br>
-
-                                                <a title="Eliminar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="EliminarActividad({{$actividad->id_actividad}})"><i class="fa fa-trash"></i></a>
-
+                                            <div class="col-lg-3">
+                                                
+                                                <!--
                                                 <a title="Ver entregas" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('actividad/ver_entregas', $actividad->id_actividad) }}"><i class="fa fa-check-square"></i></a>
 
                                                 <a title="Editar actividad" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('actividad/editar_actividad', $actividad->id_actividad) }}"> <i class="fa fa-pencil-square-o"></i></a>
@@ -116,7 +114,30 @@ header("Content-Type: text/html; charset=utf-8");
                                                     <a title="Cambiar a visible" class="pull-right" style="color: #007bff; cursor: pointer; margin-left: 15px" href="#" onclick="CambiarEstadoActividad({{$actividad->id_actividad}})"><i class="fa fa-eye-slash"></i></a>
                                                 @else
                                                 <a title="Ocultar" class="pull-right" style="color: #007bff; cursor: pointer; margin-left: 15px" href="#" onclick="CambiarEstadoActividad({{$actividad->id_actividad}})"><i class="fa fa-eye"></i></a>
-                                                @endif   
+                                                @endif
+
+                                                <br>
+                                                <a title="Eliminar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="EliminarActividad({{$actividad->id_actividad}})"><i class="fa fa-trash"></i></a>
+
+                                                <a title="Ver informacion de la actividad" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerInformacion({{$actividad->id_actividad}})"><i class="fa fa-info-circle"></i></a>
+                                            -->
+                                                <ul class="nav nav-pills">  
+                                                    <li class="nav-item dropdown">
+                                                        <a class="nav-link" data-toggle="dropdown" title="Ver más" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#"><i class="fa fa-ellipsis-h"></i></a>
+                                                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 42px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                            <a class="dropdown-item" href="{{ route('actividad/ver_entregas', $actividad->id_actividad) }}">Ver entregas</a>
+                                                            <a class="dropdown-item" href="{{ route('actividad/editar_actividad', $actividad->id_actividad) }}">Editar actividad</a>
+                                                            @if ($actividad->estado == 0)
+                                                                <a class="dropdown-item" onclick="CambiarEstadoActividad({{$actividad->id_actividad}})" href="#">Cambiar a visible</a>
+                                                            @else
+                                                                <a class="dropdown-item" onclick="CambiarEstadoActividad({{$actividad->id_actividad}})" href="#">Ocultar</a>
+                                                            @endif
+                                                            
+                                                            <a class="dropdown-item" onclick="VerInformacion({{$actividad->id_actividad}})" href="#">Ver informacion</a>
+                                                            <a class="dropdown-item" onclick="EliminarActividad({{$actividad->id_actividad}})" href="#">Eliminar</a>
+                                                        </div>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                         
@@ -207,6 +228,8 @@ header("Content-Type: text/html; charset=utf-8");
 </div>
 </div>
 @endsection
+
+
 
 <div class="modal fade" id="modal_opciones" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -383,12 +406,62 @@ header("Content-Type: text/html; charset=utf-8");
         </div>
       </div>
 </div>
+
+<div class="modal fade" id="ModalInformacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width: 550px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Informacion de la actividad</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id_documento" id="id_documento">
+        <input type="hidden" name="id_asignatura_documento" id="id_asignatura_documento">
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="nombre_actividad"></label>
+        </div>
+
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="tipo_actividad"></label>
+        </div>
+
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="lapso_entrega_actividad"></label>
+        </div>
+
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="observaciones_actividad"></label>
+        </div>
+
+        <div class="table-responsive table--no-card m-b-30">
+          <table class="table table-borderless table-striped table-earning">
+              <thead>
+                  <tr>
+                      <th>Documento</th>
+                  </tr>
+              </thead>
+              <tbody id="bodytableDocumentos">
+
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     function ValidarDocumentoAdd(){
         var tipo_documento = $("#id_dominio_tipo").val()
         if(tipo_documento != 14){
             if(document.getElementById("archivo").files.length == 0 ){ 
-                Swal.fire('Error!',"Debe seleccionar un archivo valido",'warning')
+                Swal.fire('Error!',"Debe seleccionar por lo menos un archivo",'warning')
+
                 return false;
             }
         }
@@ -586,6 +659,29 @@ header("Content-Type: text/html; charset=utf-8");
             
           }
         })
+    }
+
+    function VerInformacion(id_actividad){
+      $("#ModalInformacion").modal("show")
+      $("#bodytableDocumentos").html('')
+      var url="../../actividad/consultar_actividad/"+id_actividad
+      $.get(url, function(response){
+        $("#nombre_actividad").html("<b>Nombre:</b> "+response.actividad.nombre)
+        $("#tipo_actividad").html("<b>Tipo:</b> "+response.tipo)
+        $("#lapso_entrega_actividad").html("<b>Lapso de entrega:</b> "+response.actividad.fecha_inicio+" - "+response.actividad.fecha_fin)
+        if(response.actividad.observaciones != null){
+          $("#observaciones_actividad").html("<b>Observaciones:</b> "+response.actividad.observaciones)
+        }else{
+          $("#observaciones_actividad").html("<b>Observaciones:</b> Sin observaciones")
+        }
+
+        response.documentos.forEach(function(documento){
+          var fila = "<tr>"+
+                       "<td>"+documento.nombre+"</td>"+
+                     "</tr>"
+          $("#bodytableDocumentos").append(fila)
+        })
+      })
     }
 </script>
 

@@ -13,9 +13,11 @@ class EntregaController extends Controller
 	public function ConsultarEntrega($id_entrega){
 		$entrega = Entrega::find($id_entrega);
 		$documentos = $entrega->documentos;
+		$actividad = $entrega->actividad;
 		return response()->json([
 			'entrega'=>$entrega,
-			'documentos'=>$documentos
+			'documentos'=>$documentos,
+			'actividad'=>$actividad
 			]);
 	}
 

@@ -137,13 +137,19 @@ header("Content-Type: text/html; charset=utf-8");
                                                   
                                                   @if ($entrega->calificacion != null)
                                                     <a title="Ver informacion" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerInformacion({{$actividad->id_actividad}})"> <i class="fa fa-info-circle"></i></a>
+
+                                                    <a title="Ver mi entrega" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerMiEntrega({{$entrega->id_entrega}})"> <i class="fa fa-eye"></i></a>
                                                     @else
                                                     @if ($fecha_actual >= $fecha_inicio and $fecha_actual <= $fecha_fin)
                                                       <a title="Ver informacion" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerInformacion({{$actividad->id_actividad}})"> <i class="fa fa-info-circle"></i></a>
 
+                                                      <a title="Ver mi entrega" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerMiEntrega({{$entrega->id_entrega}})"> <i class="fa fa-eye"></i></a>
+
                                                       <a title="Editar entrega" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('entrega/editar_entrega', $entrega->id_entrega) }}"> <i class="fa fa-pencil-square-o"></i></a>
                                                       @else
                                                       <a title="Ver informacion" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerInformacion({{$actividad->id_actividad}})"> <i class="fa fa-info-circle"></i></a>
+
+                                                      <a title="Ver mi entrega" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerMiEntrega({{$entrega->id_entrega}})"> <i class="fa fa-eye"></i></a>
                                                     @endif
                                                   @endif 
                                                 @endif   
@@ -279,6 +285,48 @@ header("Content-Type: text/html; charset=utf-8");
   </div>
 </div>
 
+<div class="modal fade" id="ModalInformacionEntrega" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 550px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Informacion de la entrega</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id_documento" id="id_documento">
+        <input type="hidden" name="id_asignatura_documento" id="id_asignatura_documento">
+
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="actividad"></label>
+        </div>
+
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="observaciones_entrega"></label>
+        </div>
+
+        <div class="table-responsive table--no-card m-b-30">
+          <table class="table table-borderless table-striped table-earning">
+              <thead>
+                  <tr>
+                      <th>Documento</th>
+                      <th><center>Descargar</center></th>
+                  </tr>
+              </thead>
+              <tbody id="bodytableDocumentosEntrega">
+
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="ModalVideo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document" style="max-width: 600px">
         <div class="modal-content">
@@ -301,14 +349,12 @@ header("Content-Type: text/html; charset=utf-8");
     function AbrirModalDocumento(id_asignatura){
         $("#id_asignatura").val(id_asignatura)
         $("#ModalDocumento").modal("show")
-
     }
 
     function VerVideo(url){
         var url_video = url.replace("watch?v=", "embed/");
         document.getElementById('frame_video').src = url_video
         $("#ModalVideo").modal("show")
-
     }
 
     function VerInformacion(id_actividad){
@@ -331,6 +377,28 @@ header("Content-Type: text/html; charset=utf-8");
                        "<td><center><a target=_blank href='../../documento/download/"+documento.id_documento+"'><i class='fa fa-download' style='color: #6c757d'></i></a></center></td>"+
                      "</tr>"
           $("#bodytableDocumentos").append(fila)
+        })
+      })
+    }
+
+    function VerMiEntrega(id_entrega){
+      $("#ModalInformacionEntrega").modal("show")
+      $("#bodytableDocumentosEntrega").html('')
+      var url="../../entrega/consultar_entrega/"+id_entrega
+      $.get(url, function(response){
+        $("#actividad").html("<b>Actividad:</b> "+response.actividad.nombre)
+        if(response.entrega.observaciones != null){
+          $("#observaciones_entrega").html("<b>Mis observaciones:</b> "+response.entrega.observaciones)
+        }else{
+          $("#observaciones_entrega").html("<b>Mis observaciones:</b> Sin observaciones")
+        }
+
+        response.documentos.forEach(function(documento){
+          var fila = "<tr>"+
+                       "<td>"+documento.nombre+"</td>"+
+                       "<td><center><a target=_blank href='../../documento/download/"+documento.id_documento+"'><i class='fa fa-download' style='color: #6c757d'></i></a></center></td>"+
+                     "</tr>"
+          $("#bodytableDocumentosEntrega").append(fila)
         })
       })
     }
