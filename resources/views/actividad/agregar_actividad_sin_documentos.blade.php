@@ -1,57 +1,7 @@
 <title>Agregar Actividad</title>
 @extends('layouts.main_docente')
 @section('content')
-<style type="text/css">
 
-	.au-task-list {
-    height: 100% !important;
-	}
-	.files input {
-    outline: 2px dashed #92b0b3;
-    outline-offset: -10px;
-    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
-    transition: outline-offset .15s ease-in-out, background-color .15s linear;
-    padding: 120px 0px 85px 35%;
-    text-align: center !important;
-    margin: 0;
-    width: 100% !important;
-}
-.files input:focus{     outline: 2px dashed #92b0b3;  outline-offset: -10px;
-    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
-    transition: outline-offset .15s ease-in-out, background-color .15s linear; border:1px solid #92b0b3;
- }
-.files{ position:relative}
-.files:after {  pointer-events: none;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    width: 50px;
-    right: 0;
-    height: 56px;
-    content: "";
-    background-image: url(https://image.flaticon.com/icons/png/128/109/109612.png);
-    display: block;
-    margin: 0 auto;
-    background-size: 100%;
-    background-repeat: no-repeat;
-}
-.color input{ background-color:#f1f1f1;}
-.files:before {
-    position: absolute;
-    bottom: 10px;
-    left: 0;  pointer-events: none;
-    width: 100%;
-    right: 0;
-    height: 57px;
-    content: " Arrastra los archivos. ";
-    display: block;
-    margin: 0 auto;
-    color: #2ea591;
-    font-weight: 600;
-    text-transform: capitalize;
-    text-align: center;
-}
-</style>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <div class="row">
@@ -127,7 +77,8 @@
 								                	<div class="form-group">
 								                        <label for="cc-payment" class="control-label mb-1">Estado</label>
 								                        <select class="form-control" name="estado">
-								                        	<option value="1">Visible</option><option value="0">Oculto</option>
+								                        	<option value="1">Visible</option>
+                                                            <option value="0">Oculto</option>
 								                        </select>
 								                    </div>
 												</div>
@@ -150,19 +101,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-	                                      <div class="row">
-	                                        	<div class="col-md-12">
-									              <div class="form-group files">
-									                <label>Subir archivos </label>
-									                <input type="file" class="form-control" multiple="multiple" name="archivos[]" id="archivos[]">
-									              </div>
-											  </div>
-	                                        </div>
+	                                      
 	                                      <div class="row">
 	                                      	<div class="col-lg-3"></div>
 	                                      	<div class="col-lg-6">
-	                                      		<button type="button" onclick="ValidarDocumentosActividad()" class="btn btn-primary" style="width: 100%">Subir</button>
+	                                      		<button type="submit"class="btn btn-primary" style="width: 100%">Subir</button>
 	                                      	</div>
 	                                      </div>
                                         {{ Form::close() }}
@@ -177,16 +120,6 @@
     </div>
 </div>
 <script>
-    function ValidarDocumentosActividad(){
-        if(document.getElementById("archivos[]").files.length == 0 ){ 
-            Swal.fire('Error!',"Debe seleccionar por lo menos un archivo",'warning')
-            return false;
-        }
-        
-        $("#form_agregar_actividad").submit()
-        //aqui todo esta bien
-    }
-
 	$(document).ready(function(){
 		$('input[name="fechas"]').daterangepicker({
 	     timePicker: true,

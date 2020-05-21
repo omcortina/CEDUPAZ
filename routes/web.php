@@ -71,6 +71,9 @@ Route::any('documento/subir_documento', 'DocumentoController@SubirDocumento')->n
 
 Route::any('actividad/agregar_actividad/{id_asignatura}', 'ActividadController@AgregarActividad')->name('actividad/agregar_actividad');
 
+Route::any('actividad/agregar_actividad_sin_documentos/{id_asignatura}', 'ActividadController@AgregarActividadSinDocumentos')->name('actividad/agregar_actividad');
+
+
 Route::any('actividad/editar_actividad/{id_actividad}', 'ActividadController@EditarActividad')->name('actividad/editar_actividad');
 
 Route::any('actividad/consultar_actividad/{id_actividad}', 'ActividadController@ConsultarActividad')->name('actividad/consultar_actividad');

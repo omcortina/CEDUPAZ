@@ -171,7 +171,7 @@ header("Content-Type: text/html; charset=utf-8");
                                 <div class="{{$colores[$contador]}}">
                                     <div class="au-task__item-inner" id="div_documento">
                                         <div class=row>
-                                            <div class="col-lg-6">
+                                            <div class="col-lg-9">
                                                 <h5 class="task">
                                                     <a href="#"><b>Nombre: </b>{{ucwords(strtolower(str_replace("ñ", "n" ,$documento->nombre)))}}</a>
                                                 </h5>
@@ -186,8 +186,8 @@ header("Content-Type: text/html; charset=utf-8");
                                                     <a href="#"><b>Obervaciones: </b> <i style="margin-left: 10px" class="fa fa-comment" title="{{ucwords(strtolower(str_replace("ñ", "n" ,$documento->descripcion)))}}"></i></a>
                                                 </h5>
                                             </div>
-                                            <div class="col-lg-6">
-                                                <br>
+                                            <div class="col-lg-3">
+                                                <!--
                                                 <a title="Eliminar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="EliminarDocumento({{$documento->id_documento}})"><i class="fa fa-trash"></i></a>
 
                                                 <a title="Editar documento" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="AbrirModalDocumentoEdit({{$documento->id_documento}})"> <i class="fa fa-pencil-square-o"></i></a>
@@ -201,7 +201,30 @@ header("Content-Type: text/html; charset=utf-8");
                                                     <a target="_blank" title="Descargar" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="{{ route('documento/download', $documento->id_documento) }}"><i class="fa fa-download"></i></a>
                                                 @else
                                                 <a title="Ver video" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#" onclick="VerVideo('{{$documento->url}}')"><i class="fa fa-video-camera"></i></a>
-                                                @endif    
+                                                @endif
+                                                -->
+                                                <ul class="nav nav-pills">  
+                                                    <li class="nav-item dropdown">
+                                                        <a class="nav-link" data-toggle="dropdown" title="Ver más" class="pull-right" style="margin-left: 15px; color: #007bff; cursor: pointer;" href="#"><i class="fa fa-ellipsis-h"></i></a>
+                                                        <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 42px, 0px); top: 0px; left: 0px; will-change: transform;">
+                                                            @if ($documento->id_dominio_tipo != 14)
+                                                                <a target="_blank" class="dropdown-item" href="{{ route('documento/download', $documento->id_documento) }}">Descargar</a>
+                                                            @else
+                                                                <a class="dropdown-item" href="#" onclick="VerVideo('{{$documento->url}}')">Ver video</a>
+                                                            @endif
+                                                            
+                                                            <a class="dropdown-item" href="#" onclick="AbrirModalDocumentoEdit({{$documento->id_documento}})">Editar documento</a>
+
+                                                             @if ($documento->estado_oculto == 0)
+                                                                <a class="dropdown-item" onclick="CambiarEstado({{$documento->id_documento}})" href="#">Cambiar a visible</a>
+                                                            @else
+                                                                <a class="dropdown-item" onclick="CambiarEstado({{$documento->id_documento}})" href="#">Ocultar</a>
+                                                            @endif
+
+                                                            <a class="dropdown-item" onclick="EliminarDocumento({{$documento->id_documento}})" href="#">Eliminar</a>
+                                                        </div>
+                                                    </li>
+                                                </ul>    
                                             </div>
                                         </div>
                                         
@@ -232,7 +255,7 @@ header("Content-Type: text/html; charset=utf-8");
 
 
 <div class="modal fade" id="modal_opciones" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 400px">
     <div class="modal-content ">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Opciones</h5>
@@ -243,18 +266,78 @@ header("Content-Type: text/html; charset=utf-8");
       <div class="modal-body">
         <div class="row">
             <input type="hidden" id="id_asignatura_escogida">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <a onclick="AbrirModalDocumento(0)" href="#" class="btn btn-success" style="color: white; width: 100%"><i class="fa fa-book"></i> Nuevo documento</a>
             </div>
-
-            <div class="col-lg-6">
-                <a onclick="AgregarActividad()" class="btn btn-info" style="color: white; width: 100%"><i class="fa fa-users"></i> Nueva actividad</a>              
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-12">
+                <a onclick="AgregarActividad()" class="btn btn-info" style="color: white; width: 100%"><i class="fa fa-book"></i> Nueva actividad<br>(Con archivos)</a>
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-12">
+                <a  onclick="AgregarActividadSinDocumento()" class="btn btn-warning" style="color: white; width: 100%"><i class="fa fa-users"></i> Nueva actividad<br>(Sin archivos)</a>              
             </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="ModalInformacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width: 550px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Informacion de la actividad</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="id_documento" id="id_documento">
+        <input type="hidden" name="id_asignatura_documento" id="id_asignatura_documento">
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="nombre_actividad"></label>
+        </div>
+
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="tipo_actividad"></label>
+        </div>
+
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="lapso_entrega_actividad"></label>
+        </div>
+
+        <div class="form-group">
+            <label for="cc-payment" class="control-label mb-1" id="observaciones_actividad"></label>
+        </div>
+
+        <div class="table-responsive table--no-card m-b-30">
+          <table class="table table-borderless table-striped table-earning">
+              <thead>
+                  <tr>
+                      <th>Nombre del documento: </th>
+                      <th><center>Descargar</center></th>
+                      
+                  </tr>
+              </thead>
+              <tbody id="bodytableDocumentos">
+
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 {{ Form::open(array('method' => 'post', 'files' => true, 'id'=>'form_documento', 'route' => 'documento/subir_documento'))}}
     <div class="modal fade" id="ModalDocumento" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -276,7 +359,7 @@ header("Content-Type: text/html; charset=utf-8");
             <div class="form-group">
                 <label for="cc-payment" class="control-label mb-1">Tipo de documento</label>
 
-                <select name="id_dominio_tipo"  class="form-control" onchange="if(this.value==14){$('#divUrlVideo').fadeIn(); $('#divDocumento').fadeOut()} else{$('#divUrlVideo').fadeOut(); $('#divDocumento').fadeIn()} if(this.value==0){$('#divDocumento').fadeOut(); $('#divUrlVideo').fadeOut()}">
+                <select name="id_dominio_tipo" id="id_dominio_tipo"  class="form-control" onchange="if(this.value==14){$('#divUrlVideo').fadeIn(); $('#divDocumento').fadeOut()} else{$('#divUrlVideo').fadeOut(); $('#divDocumento').fadeIn()} if(this.value==0){$('#divDocumento').fadeOut(); $('#divUrlVideo').fadeOut()}">
                     @php
                         $tipos_de_documento = \App\Dominio::all()->where('id_padre',7);
                     @endphp
@@ -407,54 +490,6 @@ header("Content-Type: text/html; charset=utf-8");
       </div>
 </div>
 
-<div class="modal fade" id="ModalInformacion" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document" style="max-width: 550px">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Informacion de la actividad</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <input type="hidden" name="id_documento" id="id_documento">
-        <input type="hidden" name="id_asignatura_documento" id="id_asignatura_documento">
-        <div class="form-group">
-            <label for="cc-payment" class="control-label mb-1" id="nombre_actividad"></label>
-        </div>
-
-        <div class="form-group">
-            <label for="cc-payment" class="control-label mb-1" id="tipo_actividad"></label>
-        </div>
-
-        <div class="form-group">
-            <label for="cc-payment" class="control-label mb-1" id="lapso_entrega_actividad"></label>
-        </div>
-
-        <div class="form-group">
-            <label for="cc-payment" class="control-label mb-1" id="observaciones_actividad"></label>
-        </div>
-
-        <div class="table-responsive table--no-card m-b-30">
-          <table class="table table-borderless table-striped table-earning">
-              <thead>
-                  <tr>
-                      <th>Documento</th>
-                  </tr>
-              </thead>
-              <tbody id="bodytableDocumentos">
-
-              </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
     function ValidarDocumentoAdd(){
         var tipo_documento = $("#id_dominio_tipo").val()
@@ -480,6 +515,11 @@ header("Content-Type: text/html; charset=utf-8");
     function AgregarActividad(){
         asignatura_escojida = $("#id_asignatura_escogida").val()
         location.href="../../actividad/agregar_actividad/"+asignatura_escojida 
+    }
+
+    function AgregarActividadSinDocumento(){
+        asignatura_escojida = $("#id_asignatura_escogida").val()
+        location.href="../../actividad/agregar_actividad_sin_documentos/"+asignatura_escojida 
     }
     
     function AbrirModalDocumento(id_asignatura){

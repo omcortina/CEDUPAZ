@@ -31,7 +31,7 @@ class ActividadController extends Controller
     	if ($post) { 	
     		$actividad = new Actividad;
     		$post = (object) $post;
-    		
+            
     		$fecha_inicio = date('Y-m-d H:i', strtotime(str_replace("/", "-", explode(" - ", $post->fechas)[0])));
             $fecha_fin = date('Y-m-d H:i', strtotime(str_replace("/", "-", explode(" - ", $post->fechas)[1])));
     		$request['fecha_inicio'] = $fecha_inicio;
@@ -70,6 +70,36 @@ class ActividadController extends Controller
         }
 
     	return view("actividad.agregar_actividad", compact("asignatura"), compact("errors"));
+    }
+
+    public function AgregarActividadSinDocumentos(Request $request, $id_asignatura)
+    {
+        
+        $asignatura = Asignatura::find($id_asignatura);
+        $post = $request->all();
+        
+        $errors = [];
+        if ($post) {    
+            $actividad = new Actividad;
+            $post = (object) $post;
+            
+            $fecha_inicio = date('Y-m-d H:i', strtotime(str_replace("/", "-", explode(" - ", $post->fechas)[0])));
+            $fecha_fin = date('Y-m-d H:i', strtotime(str_replace("/", "-", explode(" - ", $post->fechas)[1])));
+            $request['fecha_inicio'] = $fecha_inicio;
+            $request['fecha_fin'] = $fecha_fin;
+            $validator = \Validator::make($request->except(['_token','fechas']), $actividad->rules);
+
+            if (!$validator->fails()) {
+                $actividad->fill($request->except(['_token','fechas']));
+                $actividad->save();
+                $mensaje = "Actividad subida";
+                session()->flash('mensaje_actividad', $mensaje);
+                return redirect()->route('persona/listar_materias_curso', ['id_curso' => $asignatura->id_curso]);
+            }
+            $errors = $validator->messages()->get('*');
+        }
+
+        return view("actividad.agregar_actividad_sin_documentos", compact("asignatura"), compact("errors"));
     }
 
     public function EditarActividad(Request $request, $id_actividad){
