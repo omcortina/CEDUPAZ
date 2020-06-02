@@ -12,7 +12,15 @@ use Illuminate\Http\Request;
 class PersonaController extends Controller
 {
     
-
+    public function ConsultarEstudiantesPorEstado($estado){
+        $estudiantes = Persona::all()->where('estado', $estado)->where('id_dominio_tipo_persona', 10);
+        $nuevos_estudiantes=[];
+        foreach ($estudiantes as $key => $estudiante) {
+            $estudiante->sexo->nombre;
+            array_push($nuevos_estudiantes, $estudiante);
+        }
+        return response()->json($nuevos_estudiantes);
+    }
 
     public function ValidarLogin(Request $request)
     {

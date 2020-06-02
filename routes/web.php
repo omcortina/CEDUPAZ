@@ -29,6 +29,8 @@ Route::get('persona/listar_estudiantes','PersonaController@ListarEstudiantes')->
 
 Route::get('persona/filtro_estudiantes','PersonaController@FlitroEstudiantes')->name('persona/filtro_estudiantes');
 
+Route::get('persona/consultar_estudiantes_por_estado/{estado}','PersonaController@ConsultarEstudiantesPorEstado')->name('persona/consultar_estudiantes_por_estado');
+
 Route::any('persona/registrar_docentes', 'PersonaController@GuardarDocente')->name('persona/registrar_docentes');
 
 Route::any('persona/registrar_estudiantes', 'PersonaController@GuardarEstudiante')->name('persona/registrar_estudiantes');

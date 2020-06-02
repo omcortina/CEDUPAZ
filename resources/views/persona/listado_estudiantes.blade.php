@@ -9,7 +9,7 @@
             <div class="card-header">Listado de estudiantes</div>
             <div class="card-body">
             <div class="row">
-	            <div class="col-lg-4">
+	            <div class="col-lg-2">
                     <a class="btn btn-primary" href="{{ route('persona/registrar_estudiantes')}}">
                         <i>Nuevo</i>
                     </a>        
@@ -17,7 +17,7 @@
                 <div class="col-lg-1">
                     <label for="cc-payment" class="control-label mb-1">Curso</label>
                 </div>
-                <div class="col-lg-3">
+                <div class="col-lg-2">
                         <div class="form-group">
                         <select id="selectCurso"  class="form-control" onchange="ConsultarEstudiantes()" required>
                             @php
@@ -30,6 +30,19 @@
                         </select>
                      </div>
                 </div>
+
+                <div class="col-lg-1">
+                    <label for="cc-payment" class="control-label mb-1">Estado</label>
+                </div>
+                <div class="col-lg-2">
+                        <div class="form-group">
+                        <select id="selectEstado"  class="form-control" onchange="ConsultarEstudiantesPorEstado()">
+                                <option value="1">Activos</option>
+                                <option value="0">Inactivos</option>
+                        </select>
+                     </div>
+                </div>
+
 	            <div class="col-lg-4">
 	            <div class="input-group">
                     <div class="input-group-btn">
@@ -150,6 +163,29 @@
             })
         }
         
+    }
+
+    function ConsultarEstudiantesPorEstado() {
+        $("#bodytable").html('')
+        var estado = $("#selectEstado").val()
+
+        var url = "../persona/consultar_estudiantes_por_estado/"+estado
+        $.get(url, function(response){
+            response.forEach(function(nuevos_estudiantes){
+                var fila =  "<tr onclick=\"location.href = '../persona/editar_estudiante/"+nuevos_estudiantes.id_persona+"'\">"+
+                                "<td>"+nuevos_estudiantes.id_persona+"</td>"+
+                                "<td>"+nuevos_estudiantes.identificacion+"</td>"+
+                                "<td>"+nuevos_estudiantes.nombre+"</td>"+
+                                "<td>"+nuevos_estudiantes.apellido+"</td>"+
+                                "<td>"+nuevos_estudiantes.email+"</td>"+
+                                "<td>"+nuevos_estudiantes.telefono+"</td>"+
+                                "<td>"+nuevos_estudiantes.sexo.nombre+"</td>"+
+                                "<td>"+nuevos_estudiantes.username+"</td>"+
+                                "<td>"+nuevos_estudiantes.password+"</td>"+
+                            "</tr>"
+            $("#bodytable").append(fila)   
+            })
+        })
     }
 </script>
 
